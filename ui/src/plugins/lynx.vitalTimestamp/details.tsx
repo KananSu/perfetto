@@ -36,6 +36,7 @@ import {getSlice, SliceDetails} from '../../components/sql_utils/slice';
 import {asArgSetId, asSliceSqlId} from '../../components/sql_utils/core_types';
 import {getArgs} from '../../components/sql_utils/args';
 import {getFirstStringArg} from '../../lynx_perf/trace_utils';
+import {eventLoggerState} from '../../event_logger';
 
 /**
  * Pipeline Stage Interface
@@ -229,6 +230,9 @@ export class VitalTimestampDetailsPanel implements TrackEventDetailsPanel {
       Number(this.sliceDetail?.ts),
     );
     this.loading = false;
+    eventLoggerState.state.eventLogger.logEvent('lynx_feature_usage', {
+      type: 'VitalTimestamp',
+    });
   }
 
   /**
