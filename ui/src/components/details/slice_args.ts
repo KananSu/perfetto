@@ -26,6 +26,7 @@ import {raf} from '../../core/raf_scheduler';
 import {stringToJsonObject} from '../../lynx_perf/string_utils';
 import {Icons} from '../../base/semantic_icons';
 import {lynxPerfGlobals} from '../../lynx_perf/lynx_perf_globals';
+import {RightSidebarTab} from '../../lynx_perf/types';
 
 // Renders slice arguments (key/value pairs) as a subtree.
 export function renderSliceArguments(trace: Trace, args: ArgsDict): m.Children {
@@ -84,9 +85,7 @@ export function renderSliceArguments(trace: Trace, args: ArgsDict): m.Children {
             label: 'Focus LynxView',
             icon: 'filter',
             onclick: () => {
-              if (!lynxPerfGlobals.state.showRightSidebar) {
-                lynxPerfGlobals.toggleRightSidebar();
-              }
+              lynxPerfGlobals.changeRightSidebarTab(RightSidebarTab.LynxView);
             },
           }),
         );
