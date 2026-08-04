@@ -103,6 +103,8 @@ export const ROUTE_SCHEMA = z
      * the page will automatically show the UI tree and select this ui node.
      */
     uiTreeId: z.string().optional().catch(undefined),
+
+    from: z.string().optional().catch(undefined),
   })
 
   // Allow arbitrary values to pass through, these may be forwarded to plugins.
