@@ -1,6 +1,6 @@
 {
   "name": "@lynx-js/trace-analysis-agent",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "Lynx trace analysis AI agent",
   "keywords": [
     "lynx",
