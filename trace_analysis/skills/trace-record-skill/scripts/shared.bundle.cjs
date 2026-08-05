@@ -31237,159 +31237,159 @@ const INTERNALS = Symbol('Body internals');
  * @return  Void
  */
 class Body {
-  constructor(body, {
-    size = 0
-  } = {}) {
-    let boundary = null;
+	constructor(body, {
+		size = 0
+	} = {}) {
+		let boundary = null;
 
-    if (body === null) {
-      // Body is undefined or null
-      body = null;
-    } else if ((0,_utils_is_js__WEBPACK_IMPORTED_MODULE_7__/* .isURLSearchParameters */ .Od)(body)) {
-      // Body is a URLSearchParams
-      body = node_buffer__WEBPACK_IMPORTED_MODULE_2__.Buffer.from(body.toString());
-    } else if ((0,_utils_is_js__WEBPACK_IMPORTED_MODULE_7__/* .isBlob */ .qf)(body)) {
-      // Body is blob
-    } else if (node_buffer__WEBPACK_IMPORTED_MODULE_2__.Buffer.isBuffer(body)) {
-      // Body is Buffer
-    } else if (node_util__WEBPACK_IMPORTED_MODULE_1__.types.isAnyArrayBuffer(body)) {
-      // Body is ArrayBuffer
-      body = node_buffer__WEBPACK_IMPORTED_MODULE_2__.Buffer.from(body);
-    } else if (ArrayBuffer.isView(body)) {
-      // Body is ArrayBufferView
-      body = node_buffer__WEBPACK_IMPORTED_MODULE_2__.Buffer.from(body.buffer, body.byteOffset, body.byteLength);
-    } else if (body instanceof node_stream__WEBPACK_IMPORTED_MODULE_0__) {
-      // Body is stream
-    } else if (body instanceof formdata_polyfill_esm_min_js__WEBPACK_IMPORTED_MODULE_4__/* .FormData */ .fS) {
-      // Body is FormData
-      body = (0,formdata_polyfill_esm_min_js__WEBPACK_IMPORTED_MODULE_4__/* .formDataToBlob */ .$n)(body);
-      boundary = body.type.split('=')[1];
-    } else {
-      // None of the above
-      // coerce to string then buffer
-      body = node_buffer__WEBPACK_IMPORTED_MODULE_2__.Buffer.from(String(body));
-    }
+		if (body === null) {
+			// Body is undefined or null
+			body = null;
+		} else if ((0,_utils_is_js__WEBPACK_IMPORTED_MODULE_7__/* .isURLSearchParameters */ .Od)(body)) {
+			// Body is a URLSearchParams
+			body = node_buffer__WEBPACK_IMPORTED_MODULE_2__.Buffer.from(body.toString());
+		} else if ((0,_utils_is_js__WEBPACK_IMPORTED_MODULE_7__/* .isBlob */ .qf)(body)) {
+			// Body is blob
+		} else if (node_buffer__WEBPACK_IMPORTED_MODULE_2__.Buffer.isBuffer(body)) {
+			// Body is Buffer
+		} else if (node_util__WEBPACK_IMPORTED_MODULE_1__.types.isAnyArrayBuffer(body)) {
+			// Body is ArrayBuffer
+			body = node_buffer__WEBPACK_IMPORTED_MODULE_2__.Buffer.from(body);
+		} else if (ArrayBuffer.isView(body)) {
+			// Body is ArrayBufferView
+			body = node_buffer__WEBPACK_IMPORTED_MODULE_2__.Buffer.from(body.buffer, body.byteOffset, body.byteLength);
+		} else if (body instanceof node_stream__WEBPACK_IMPORTED_MODULE_0__) {
+			// Body is stream
+		} else if (body instanceof formdata_polyfill_esm_min_js__WEBPACK_IMPORTED_MODULE_4__/* .FormData */ .fS) {
+			// Body is FormData
+			body = (0,formdata_polyfill_esm_min_js__WEBPACK_IMPORTED_MODULE_4__/* .formDataToBlob */ .$n)(body);
+			boundary = body.type.split('=')[1];
+		} else {
+			// None of the above
+			// coerce to string then buffer
+			body = node_buffer__WEBPACK_IMPORTED_MODULE_2__.Buffer.from(String(body));
+		}
 
-    let stream = body;
+		let stream = body;
 
-    if (node_buffer__WEBPACK_IMPORTED_MODULE_2__.Buffer.isBuffer(body)) {
-      stream = node_stream__WEBPACK_IMPORTED_MODULE_0__.Readable.from(body);
-    } else if ((0,_utils_is_js__WEBPACK_IMPORTED_MODULE_7__/* .isBlob */ .qf)(body)) {
-      stream = node_stream__WEBPACK_IMPORTED_MODULE_0__.Readable.from(body.stream());
-    }
+		if (node_buffer__WEBPACK_IMPORTED_MODULE_2__.Buffer.isBuffer(body)) {
+			stream = node_stream__WEBPACK_IMPORTED_MODULE_0__.Readable.from(body);
+		} else if ((0,_utils_is_js__WEBPACK_IMPORTED_MODULE_7__/* .isBlob */ .qf)(body)) {
+			stream = node_stream__WEBPACK_IMPORTED_MODULE_0__.Readable.from(body.stream());
+		}
 
-    this[INTERNALS] = {
-      body,
-      stream,
-      boundary,
-      disturbed: false,
-      error: null
-    };
-    this.size = size;
+		this[INTERNALS] = {
+			body,
+			stream,
+			boundary,
+			disturbed: false,
+			error: null
+		};
+		this.size = size;
 
-    if (body instanceof node_stream__WEBPACK_IMPORTED_MODULE_0__) {
-      body.on('error', error_ => {
-        const error = error_ instanceof _errors_base_js__WEBPACK_IMPORTED_MODULE_6__/* .FetchBaseError */ .o ?
-          error_ :
-          new _errors_fetch_error_js__WEBPACK_IMPORTED_MODULE_5__/* .FetchError */ .f(`Invalid response body while trying to fetch ${this.url}: ${error_.message}`, 'system', error_);
-        this[INTERNALS].error = error;
-      });
-    }
-  }
+		if (body instanceof node_stream__WEBPACK_IMPORTED_MODULE_0__) {
+			body.on('error', error_ => {
+				const error = error_ instanceof _errors_base_js__WEBPACK_IMPORTED_MODULE_6__/* .FetchBaseError */ .o ?
+					error_ :
+					new _errors_fetch_error_js__WEBPACK_IMPORTED_MODULE_5__/* .FetchError */ .f(`Invalid response body while trying to fetch ${this.url}: ${error_.message}`, 'system', error_);
+				this[INTERNALS].error = error;
+			});
+		}
+	}
 
-  get body() {
-    return this[INTERNALS].stream;
-  }
+	get body() {
+		return this[INTERNALS].stream;
+	}
 
-  get bodyUsed() {
-    return this[INTERNALS].disturbed;
-  }
+	get bodyUsed() {
+		return this[INTERNALS].disturbed;
+	}
 
-  /**
-   * Decode response as ArrayBuffer
-   *
-   * @return  Promise
-   */
-  async arrayBuffer() {
-    const {buffer, byteOffset, byteLength} = await consumeBody(this);
-    return buffer.slice(byteOffset, byteOffset + byteLength);
-  }
+	/**
+	 * Decode response as ArrayBuffer
+	 *
+	 * @return  Promise
+	 */
+	async arrayBuffer() {
+		const {buffer, byteOffset, byteLength} = await consumeBody(this);
+		return buffer.slice(byteOffset, byteOffset + byteLength);
+	}
 
-  async formData() {
-    const ct = this.headers.get('content-type');
+	async formData() {
+		const ct = this.headers.get('content-type');
 
-    if (ct.startsWith('application/x-www-form-urlencoded')) {
-      const formData = new formdata_polyfill_esm_min_js__WEBPACK_IMPORTED_MODULE_4__/* .FormData */ .fS();
-      const parameters = new URLSearchParams(await this.text());
+		if (ct.startsWith('application/x-www-form-urlencoded')) {
+			const formData = new formdata_polyfill_esm_min_js__WEBPACK_IMPORTED_MODULE_4__/* .FormData */ .fS();
+			const parameters = new URLSearchParams(await this.text());
 
-      for (const [name, value] of parameters) {
-        formData.append(name, value);
-      }
+			for (const [name, value] of parameters) {
+				formData.append(name, value);
+			}
 
-      return formData;
-    }
+			return formData;
+		}
 
-    const {toFormData} = await __webpack_require__.e(/* import() */ 804).then(__webpack_require__.bind(__webpack_require__, 5737));
-    return toFormData(this.body, ct);
-  }
+		const {toFormData} = await __webpack_require__.e(/* import() */ 804).then(__webpack_require__.bind(__webpack_require__, 5737));
+		return toFormData(this.body, ct);
+	}
 
-  /**
-   * Return raw response as Blob
-   *
-   * @return Promise
-   */
-  async blob() {
-    const ct = (this.headers && this.headers.get('content-type')) || (this[INTERNALS].body && this[INTERNALS].body.type) || '';
-    const buf = await this.arrayBuffer();
+	/**
+	 * Return raw response as Blob
+	 *
+	 * @return Promise
+	 */
+	async blob() {
+		const ct = (this.headers && this.headers.get('content-type')) || (this[INTERNALS].body && this[INTERNALS].body.type) || '';
+		const buf = await this.arrayBuffer();
 
-    return new fetch_blob__WEBPACK_IMPORTED_MODULE_3__/* ["default"] */ .A([buf], {
-      type: ct
-    });
-  }
+		return new fetch_blob__WEBPACK_IMPORTED_MODULE_3__/* ["default"] */ .A([buf], {
+			type: ct
+		});
+	}
 
-  /**
-   * Decode response as json
-   *
-   * @return  Promise
-   */
-  async json() {
-    const text = await this.text();
-    return JSON.parse(text);
-  }
+	/**
+	 * Decode response as json
+	 *
+	 * @return  Promise
+	 */
+	async json() {
+		const text = await this.text();
+		return JSON.parse(text);
+	}
 
-  /**
-   * Decode response as text
-   *
-   * @return  Promise
-   */
-  async text() {
-    const buffer = await consumeBody(this);
-    return new TextDecoder().decode(buffer);
-  }
+	/**
+	 * Decode response as text
+	 *
+	 * @return  Promise
+	 */
+	async text() {
+		const buffer = await consumeBody(this);
+		return new TextDecoder().decode(buffer);
+	}
 
-  /**
-   * Decode response as buffer (non-spec api)
-   *
-   * @return  Promise
-   */
-  buffer() {
-    return consumeBody(this);
-  }
+	/**
+	 * Decode response as buffer (non-spec api)
+	 *
+	 * @return  Promise
+	 */
+	buffer() {
+		return consumeBody(this);
+	}
 }
 
 Body.prototype.buffer = (0,node_util__WEBPACK_IMPORTED_MODULE_1__.deprecate)(Body.prototype.buffer, 'Please use \'response.arrayBuffer()\' instead of \'response.buffer()\'', 'node-fetch#buffer');
 
 // In browsers, all properties are enumerable.
 Object.defineProperties(Body.prototype, {
-  body: {enumerable: true},
-  bodyUsed: {enumerable: true},
-  arrayBuffer: {enumerable: true},
-  blob: {enumerable: true},
-  json: {enumerable: true},
-  text: {enumerable: true},
-  data: {get: (0,node_util__WEBPACK_IMPORTED_MODULE_1__.deprecate)(() => {},
-    'data doesn\'t exist, use json(), text(), arrayBuffer(), or body instead',
-    'https://github.com/node-fetch/node-fetch/issues/1000 (response)')}
+	body: {enumerable: true},
+	bodyUsed: {enumerable: true},
+	arrayBuffer: {enumerable: true},
+	blob: {enumerable: true},
+	json: {enumerable: true},
+	text: {enumerable: true},
+	data: {get: (0,node_util__WEBPACK_IMPORTED_MODULE_1__.deprecate)(() => {},
+		'data doesn\'t exist, use json(), text(), arrayBuffer(), or body instead',
+		'https://github.com/node-fetch/node-fetch/issues/1000 (response)')}
 });
 
 /**
@@ -31400,62 +31400,62 @@ Object.defineProperties(Body.prototype, {
  * @return Promise
  */
 async function consumeBody(data) {
-  if (data[INTERNALS].disturbed) {
-    throw new TypeError(`body used already for: ${data.url}`);
-  }
+	if (data[INTERNALS].disturbed) {
+		throw new TypeError(`body used already for: ${data.url}`);
+	}
 
-  data[INTERNALS].disturbed = true;
+	data[INTERNALS].disturbed = true;
 
-  if (data[INTERNALS].error) {
-    throw data[INTERNALS].error;
-  }
+	if (data[INTERNALS].error) {
+		throw data[INTERNALS].error;
+	}
 
-  const {body} = data;
+	const {body} = data;
 
-  // Body is null
-  if (body === null) {
-    return node_buffer__WEBPACK_IMPORTED_MODULE_2__.Buffer.alloc(0);
-  }
+	// Body is null
+	if (body === null) {
+		return node_buffer__WEBPACK_IMPORTED_MODULE_2__.Buffer.alloc(0);
+	}
 
-  /* c8 ignore next 3 */
-  if (!(body instanceof node_stream__WEBPACK_IMPORTED_MODULE_0__)) {
-    return node_buffer__WEBPACK_IMPORTED_MODULE_2__.Buffer.alloc(0);
-  }
+	/* c8 ignore next 3 */
+	if (!(body instanceof node_stream__WEBPACK_IMPORTED_MODULE_0__)) {
+		return node_buffer__WEBPACK_IMPORTED_MODULE_2__.Buffer.alloc(0);
+	}
 
-  // Body is stream
-  // get ready to actually consume the body
-  const accum = [];
-  let accumBytes = 0;
+	// Body is stream
+	// get ready to actually consume the body
+	const accum = [];
+	let accumBytes = 0;
 
-  try {
-    for await (const chunk of body) {
-      if (data.size > 0 && accumBytes + chunk.length > data.size) {
-        const error = new _errors_fetch_error_js__WEBPACK_IMPORTED_MODULE_5__/* .FetchError */ .f(`content size at ${data.url} over limit: ${data.size}`, 'max-size');
-        body.destroy(error);
-        throw error;
-      }
+	try {
+		for await (const chunk of body) {
+			if (data.size > 0 && accumBytes + chunk.length > data.size) {
+				const error = new _errors_fetch_error_js__WEBPACK_IMPORTED_MODULE_5__/* .FetchError */ .f(`content size at ${data.url} over limit: ${data.size}`, 'max-size');
+				body.destroy(error);
+				throw error;
+			}
 
-      accumBytes += chunk.length;
-      accum.push(chunk);
-    }
-  } catch (error) {
-    const error_ = error instanceof _errors_base_js__WEBPACK_IMPORTED_MODULE_6__/* .FetchBaseError */ .o ? error : new _errors_fetch_error_js__WEBPACK_IMPORTED_MODULE_5__/* .FetchError */ .f(`Invalid response body while trying to fetch ${data.url}: ${error.message}`, 'system', error);
-    throw error_;
-  }
+			accumBytes += chunk.length;
+			accum.push(chunk);
+		}
+	} catch (error) {
+		const error_ = error instanceof _errors_base_js__WEBPACK_IMPORTED_MODULE_6__/* .FetchBaseError */ .o ? error : new _errors_fetch_error_js__WEBPACK_IMPORTED_MODULE_5__/* .FetchError */ .f(`Invalid response body while trying to fetch ${data.url}: ${error.message}`, 'system', error);
+		throw error_;
+	}
 
-  if (body.readableEnded === true || body._readableState.ended === true) {
-    try {
-      if (accum.every(c => typeof c === 'string')) {
-        return node_buffer__WEBPACK_IMPORTED_MODULE_2__.Buffer.from(accum.join(''));
-      }
+	if (body.readableEnded === true || body._readableState.ended === true) {
+		try {
+			if (accum.every(c => typeof c === 'string')) {
+				return node_buffer__WEBPACK_IMPORTED_MODULE_2__.Buffer.from(accum.join(''));
+			}
 
-      return node_buffer__WEBPACK_IMPORTED_MODULE_2__.Buffer.concat(accum, accumBytes);
-    } catch (error) {
-      throw new _errors_fetch_error_js__WEBPACK_IMPORTED_MODULE_5__/* .FetchError */ .f(`Could not create Buffer from response body for ${data.url}: ${error.message}`, 'system', error);
-    }
-  } else {
-    throw new _errors_fetch_error_js__WEBPACK_IMPORTED_MODULE_5__/* .FetchError */ .f(`Premature close of server response while trying to fetch ${data.url}`);
-  }
+			return node_buffer__WEBPACK_IMPORTED_MODULE_2__.Buffer.concat(accum, accumBytes);
+		} catch (error) {
+			throw new _errors_fetch_error_js__WEBPACK_IMPORTED_MODULE_5__/* .FetchError */ .f(`Could not create Buffer from response body for ${data.url}: ${error.message}`, 'system', error);
+		}
+	} else {
+		throw new _errors_fetch_error_js__WEBPACK_IMPORTED_MODULE_5__/* .FetchError */ .f(`Premature close of server response while trying to fetch ${data.url}`);
+	}
 }
 
 /**
@@ -31466,35 +31466,35 @@ async function consumeBody(data) {
  * @return  Mixed
  */
 const clone = (instance, highWaterMark) => {
-  let p1;
-  let p2;
-  let {body} = instance[INTERNALS];
+	let p1;
+	let p2;
+	let {body} = instance[INTERNALS];
 
-  // Don't allow cloning a used body
-  if (instance.bodyUsed) {
-    throw new Error('cannot clone body after it is used');
-  }
+	// Don't allow cloning a used body
+	if (instance.bodyUsed) {
+		throw new Error('cannot clone body after it is used');
+	}
 
-  // Check that body is a stream and not form-data object
-  // note: we can't clone the form-data object without having it as a dependency
-  if ((body instanceof node_stream__WEBPACK_IMPORTED_MODULE_0__) && (typeof body.getBoundary !== 'function')) {
-    // Tee instance body
-    p1 = new node_stream__WEBPACK_IMPORTED_MODULE_0__.PassThrough({highWaterMark});
-    p2 = new node_stream__WEBPACK_IMPORTED_MODULE_0__.PassThrough({highWaterMark});
-    body.pipe(p1);
-    body.pipe(p2);
-    // Set instance body to teed body and return the other teed body
-    instance[INTERNALS].stream = p1;
-    body = p2;
-  }
+	// Check that body is a stream and not form-data object
+	// note: we can't clone the form-data object without having it as a dependency
+	if ((body instanceof node_stream__WEBPACK_IMPORTED_MODULE_0__) && (typeof body.getBoundary !== 'function')) {
+		// Tee instance body
+		p1 = new node_stream__WEBPACK_IMPORTED_MODULE_0__.PassThrough({highWaterMark});
+		p2 = new node_stream__WEBPACK_IMPORTED_MODULE_0__.PassThrough({highWaterMark});
+		body.pipe(p1);
+		body.pipe(p2);
+		// Set instance body to teed body and return the other teed body
+		instance[INTERNALS].stream = p1;
+		body = p2;
+	}
 
-  return body;
+	return body;
 };
 
 const getNonSpecFormDataBoundary = (0,node_util__WEBPACK_IMPORTED_MODULE_1__.deprecate)(
-  body => body.getBoundary(),
-  'form-data doesn\'t follow the spec and requires special treatment. Use alternative package',
-  'https://github.com/node-fetch/node-fetch/issues/1167'
+	body => body.getBoundary(),
+	'form-data doesn\'t follow the spec and requires special treatment. Use alternative package',
+	'https://github.com/node-fetch/node-fetch/issues/1167'
 );
 
 /**
@@ -31508,47 +31508,47 @@ const getNonSpecFormDataBoundary = (0,node_util__WEBPACK_IMPORTED_MODULE_1__.dep
  * @returns {string | null}
  */
 const extractContentType = (body, request) => {
-  // Body is null or undefined
-  if (body === null) {
-    return null;
-  }
+	// Body is null or undefined
+	if (body === null) {
+		return null;
+	}
 
-  // Body is string
-  if (typeof body === 'string') {
-    return 'text/plain;charset=UTF-8';
-  }
+	// Body is string
+	if (typeof body === 'string') {
+		return 'text/plain;charset=UTF-8';
+	}
 
-  // Body is a URLSearchParams
-  if ((0,_utils_is_js__WEBPACK_IMPORTED_MODULE_7__/* .isURLSearchParameters */ .Od)(body)) {
-    return 'application/x-www-form-urlencoded;charset=UTF-8';
-  }
+	// Body is a URLSearchParams
+	if ((0,_utils_is_js__WEBPACK_IMPORTED_MODULE_7__/* .isURLSearchParameters */ .Od)(body)) {
+		return 'application/x-www-form-urlencoded;charset=UTF-8';
+	}
 
-  // Body is blob
-  if ((0,_utils_is_js__WEBPACK_IMPORTED_MODULE_7__/* .isBlob */ .qf)(body)) {
-    return body.type || null;
-  }
+	// Body is blob
+	if ((0,_utils_is_js__WEBPACK_IMPORTED_MODULE_7__/* .isBlob */ .qf)(body)) {
+		return body.type || null;
+	}
 
-  // Body is a Buffer (Buffer, ArrayBuffer or ArrayBufferView)
-  if (node_buffer__WEBPACK_IMPORTED_MODULE_2__.Buffer.isBuffer(body) || node_util__WEBPACK_IMPORTED_MODULE_1__.types.isAnyArrayBuffer(body) || ArrayBuffer.isView(body)) {
-    return null;
-  }
+	// Body is a Buffer (Buffer, ArrayBuffer or ArrayBufferView)
+	if (node_buffer__WEBPACK_IMPORTED_MODULE_2__.Buffer.isBuffer(body) || node_util__WEBPACK_IMPORTED_MODULE_1__.types.isAnyArrayBuffer(body) || ArrayBuffer.isView(body)) {
+		return null;
+	}
 
-  if (body instanceof formdata_polyfill_esm_min_js__WEBPACK_IMPORTED_MODULE_4__/* .FormData */ .fS) {
-    return `multipart/form-data; boundary=${request[INTERNALS].boundary}`;
-  }
+	if (body instanceof formdata_polyfill_esm_min_js__WEBPACK_IMPORTED_MODULE_4__/* .FormData */ .fS) {
+		return `multipart/form-data; boundary=${request[INTERNALS].boundary}`;
+	}
 
-  // Detect form data input from form-data module
-  if (body && typeof body.getBoundary === 'function') {
-    return `multipart/form-data;boundary=${getNonSpecFormDataBoundary(body)}`;
-  }
+	// Detect form data input from form-data module
+	if (body && typeof body.getBoundary === 'function') {
+		return `multipart/form-data;boundary=${getNonSpecFormDataBoundary(body)}`;
+	}
 
-  // Body is stream - can't really do much about this
-  if (body instanceof node_stream__WEBPACK_IMPORTED_MODULE_0__) {
-    return null;
-  }
+	// Body is stream - can't really do much about this
+	if (body instanceof node_stream__WEBPACK_IMPORTED_MODULE_0__) {
+		return null;
+	}
 
-  // Body constructor defaults other things to string
-  return 'text/plain;charset=UTF-8';
+	// Body constructor defaults other things to string
+	return 'text/plain;charset=UTF-8';
 };
 
 /**
@@ -31561,30 +31561,30 @@ const extractContentType = (body, request) => {
  * @returns {number | null}
  */
 const getTotalBytes = request => {
-  const {body} = request[INTERNALS];
+	const {body} = request[INTERNALS];
 
-  // Body is null or undefined
-  if (body === null) {
-    return 0;
-  }
+	// Body is null or undefined
+	if (body === null) {
+		return 0;
+	}
 
-  // Body is Blob
-  if ((0,_utils_is_js__WEBPACK_IMPORTED_MODULE_7__/* .isBlob */ .qf)(body)) {
-    return body.size;
-  }
+	// Body is Blob
+	if ((0,_utils_is_js__WEBPACK_IMPORTED_MODULE_7__/* .isBlob */ .qf)(body)) {
+		return body.size;
+	}
 
-  // Body is Buffer
-  if (node_buffer__WEBPACK_IMPORTED_MODULE_2__.Buffer.isBuffer(body)) {
-    return body.length;
-  }
+	// Body is Buffer
+	if (node_buffer__WEBPACK_IMPORTED_MODULE_2__.Buffer.isBuffer(body)) {
+		return body.length;
+	}
 
-  // Detect form data input from form-data module
-  if (body && typeof body.getLengthSync === 'function') {
-    return body.hasKnownLength && body.hasKnownLength() ? body.getLengthSync() : null;
-  }
+	// Detect form data input from form-data module
+	if (body && typeof body.getLengthSync === 'function') {
+		return body.hasKnownLength && body.hasKnownLength() ? body.getLengthSync() : null;
+	}
 
-  // Body is stream
-  return null;
+	// Body is stream
+	return null;
 };
 
 /**
@@ -31595,13 +31595,13 @@ const getTotalBytes = request => {
  * @returns {Promise<void>}
  */
 const writeToStream = async (dest, {body}) => {
-  if (body === null) {
-    // Body is null
-    dest.end();
-  } else {
-    // Body is stream
-    await pipeline(body, dest);
-  }
+	if (body === null) {
+		// Body is null
+		dest.end();
+	} else {
+		// Body is stream
+		await pipeline(body, dest);
+	}
 };
 
 
@@ -31621,9 +31621,9 @@ const writeToStream = async (dest, {body}) => {
  * AbortError interface for cancelled requests
  */
 class AbortError extends _base_js__WEBPACK_IMPORTED_MODULE_0__/* .FetchBaseError */ .o {
-  constructor(message, type = 'aborted') {
-    super(message, type);
-  }
+	constructor(message, type = 'aborted') {
+		super(message, type);
+	}
 }
 
 
@@ -31637,21 +31637,21 @@ class AbortError extends _base_js__WEBPACK_IMPORTED_MODULE_0__/* .FetchBaseError
 /* harmony export */   o: () => (/* binding */ FetchBaseError)
 /* harmony export */ });
 class FetchBaseError extends Error {
-  constructor(message, type) {
-    super(message);
-    // Hide custom error implementation details from end-users
-    Error.captureStackTrace(this, this.constructor);
+	constructor(message, type) {
+		super(message);
+		// Hide custom error implementation details from end-users
+		Error.captureStackTrace(this, this.constructor);
 
-    this.type = type;
-  }
+		this.type = type;
+	}
 
-  get name() {
-    return this.constructor.name;
-  }
+	get name() {
+		return this.constructor.name;
+	}
 
-  get [Symbol.toStringTag]() {
-    return this.constructor.name;
-  }
+	get [Symbol.toStringTag]() {
+		return this.constructor.name;
+	}
 }
 
 
@@ -31676,20 +31676,20 @@ class FetchBaseError extends Error {
  * FetchError interface for operational errors
  */
 class FetchError extends _base_js__WEBPACK_IMPORTED_MODULE_0__/* .FetchBaseError */ .o {
-  /**
-   * @param  {string} message -      Error message for human
-   * @param  {string} [type] -        Error type for machine
-   * @param  {SystemError} [systemError] - For Node.js system error
-   */
-  constructor(message, type, systemError) {
-    super(message, type);
-    // When err.type is `system`, err.erroredSysCall contains system error and err.code contains system error code
-    if (systemError) {
-      // eslint-disable-next-line no-multi-assign
-      this.code = this.errno = systemError.code;
-      this.erroredSysCall = systemError.syscall;
-    }
-  }
+	/**
+	 * @param  {string} message -      Error message for human
+	 * @param  {string} [type] -        Error type for machine
+	 * @param  {SystemError} [systemError] - For Node.js system error
+	 */
+	constructor(message, type, systemError) {
+		super(message, type);
+		// When err.type is `system`, err.erroredSysCall contains system error and err.code contains system error code
+		if (systemError) {
+			// eslint-disable-next-line no-multi-assign
+			this.code = this.errno = systemError.code;
+			this.erroredSysCall = systemError.syscall;
+		}
+	}
 }
 
 
@@ -31716,25 +31716,25 @@ class FetchError extends _base_js__WEBPACK_IMPORTED_MODULE_0__/* .FetchBaseError
 
 /* c8 ignore next 9 */
 const validateHeaderName = typeof node_http__WEBPACK_IMPORTED_MODULE_1__.validateHeaderName === 'function' ?
-  node_http__WEBPACK_IMPORTED_MODULE_1__.validateHeaderName :
-  name => {
-    if (!/^[\^`\-\w!#$%&'*+.|~]+$/.test(name)) {
-      const error = new TypeError(`Header name must be a valid HTTP token [${name}]`);
-      Object.defineProperty(error, 'code', {value: 'ERR_INVALID_HTTP_TOKEN'});
-      throw error;
-    }
-  };
+	node_http__WEBPACK_IMPORTED_MODULE_1__.validateHeaderName :
+	name => {
+		if (!/^[\^`\-\w!#$%&'*+.|~]+$/.test(name)) {
+			const error = new TypeError(`Header name must be a valid HTTP token [${name}]`);
+			Object.defineProperty(error, 'code', {value: 'ERR_INVALID_HTTP_TOKEN'});
+			throw error;
+		}
+	};
 
 /* c8 ignore next 9 */
 const validateHeaderValue = typeof node_http__WEBPACK_IMPORTED_MODULE_1__.validateHeaderValue === 'function' ?
-  node_http__WEBPACK_IMPORTED_MODULE_1__.validateHeaderValue :
-  (name, value) => {
-    if (/[^\t\u0020-\u007E\u0080-\u00FF]/.test(value)) {
-      const error = new TypeError(`Invalid character in header content ["${name}"]`);
-      Object.defineProperty(error, 'code', {value: 'ERR_INVALID_CHAR'});
-      throw error;
-    }
-  };
+	node_http__WEBPACK_IMPORTED_MODULE_1__.validateHeaderValue :
+	(name, value) => {
+		if (/[^\t\u0020-\u007E\u0080-\u00FF]/.test(value)) {
+			const error = new TypeError(`Invalid character in header content ["${name}"]`);
+			Object.defineProperty(error, 'code', {value: 'ERR_INVALID_CHAR'});
+			throw error;
+		}
+	};
 
 /**
  * @typedef {Headers | Record<string, string> | Iterable<readonly [string, string]> | Iterable<Iterable<string>>} HeadersInit
@@ -31749,187 +31749,187 @@ const validateHeaderValue = typeof node_http__WEBPACK_IMPORTED_MODULE_1__.valida
  *
  */
 class Headers extends URLSearchParams {
-  /**
-   * Headers class
-   *
-   * @constructor
-   * @param {HeadersInit} [init] - Response headers
-   */
-  constructor(init) {
-    // Validate and normalize init object in [name, value(s)][]
-    /** @type {string[][]} */
-    let result = [];
-    if (init instanceof Headers) {
-      const raw = init.raw();
-      for (const [name, values] of Object.entries(raw)) {
-        result.push(...values.map(value => [name, value]));
-      }
-    } else if (init == null) { // eslint-disable-line no-eq-null, eqeqeq
-      // No op
-    } else if (typeof init === 'object' && !node_util__WEBPACK_IMPORTED_MODULE_0__.types.isBoxedPrimitive(init)) {
-      const method = init[Symbol.iterator];
-      // eslint-disable-next-line no-eq-null, eqeqeq
-      if (method == null) {
-        // Record<ByteString, ByteString>
-        result.push(...Object.entries(init));
-      } else {
-        if (typeof method !== 'function') {
-          throw new TypeError('Header pairs must be iterable');
-        }
+	/**
+	 * Headers class
+	 *
+	 * @constructor
+	 * @param {HeadersInit} [init] - Response headers
+	 */
+	constructor(init) {
+		// Validate and normalize init object in [name, value(s)][]
+		/** @type {string[][]} */
+		let result = [];
+		if (init instanceof Headers) {
+			const raw = init.raw();
+			for (const [name, values] of Object.entries(raw)) {
+				result.push(...values.map(value => [name, value]));
+			}
+		} else if (init == null) { // eslint-disable-line no-eq-null, eqeqeq
+			// No op
+		} else if (typeof init === 'object' && !node_util__WEBPACK_IMPORTED_MODULE_0__.types.isBoxedPrimitive(init)) {
+			const method = init[Symbol.iterator];
+			// eslint-disable-next-line no-eq-null, eqeqeq
+			if (method == null) {
+				// Record<ByteString, ByteString>
+				result.push(...Object.entries(init));
+			} else {
+				if (typeof method !== 'function') {
+					throw new TypeError('Header pairs must be iterable');
+				}
 
-        // Sequence<sequence<ByteString>>
-        // Note: per spec we have to first exhaust the lists then process them
-        result = [...init]
-          .map(pair => {
-            if (
-              typeof pair !== 'object' || node_util__WEBPACK_IMPORTED_MODULE_0__.types.isBoxedPrimitive(pair)
-            ) {
-              throw new TypeError('Each header pair must be an iterable object');
-            }
+				// Sequence<sequence<ByteString>>
+				// Note: per spec we have to first exhaust the lists then process them
+				result = [...init]
+					.map(pair => {
+						if (
+							typeof pair !== 'object' || node_util__WEBPACK_IMPORTED_MODULE_0__.types.isBoxedPrimitive(pair)
+						) {
+							throw new TypeError('Each header pair must be an iterable object');
+						}
 
-            return [...pair];
-          }).map(pair => {
-            if (pair.length !== 2) {
-              throw new TypeError('Each header pair must be a name/value tuple');
-            }
+						return [...pair];
+					}).map(pair => {
+						if (pair.length !== 2) {
+							throw new TypeError('Each header pair must be a name/value tuple');
+						}
 
-            return [...pair];
-          });
-      }
-    } else {
-      throw new TypeError('Failed to construct \'Headers\': The provided value is not of type \'(sequence<sequence<ByteString>> or record<ByteString, ByteString>)');
-    }
+						return [...pair];
+					});
+			}
+		} else {
+			throw new TypeError('Failed to construct \'Headers\': The provided value is not of type \'(sequence<sequence<ByteString>> or record<ByteString, ByteString>)');
+		}
 
-    // Validate and lowercase
-    result =
-      result.length > 0 ?
-        result.map(([name, value]) => {
-          validateHeaderName(name);
-          validateHeaderValue(name, String(value));
-          return [String(name).toLowerCase(), String(value)];
-        }) :
-        undefined;
+		// Validate and lowercase
+		result =
+			result.length > 0 ?
+				result.map(([name, value]) => {
+					validateHeaderName(name);
+					validateHeaderValue(name, String(value));
+					return [String(name).toLowerCase(), String(value)];
+				}) :
+				undefined;
 
-    super(result);
+		super(result);
 
-    // Returning a Proxy that will lowercase key names, validate parameters and sort keys
-    // eslint-disable-next-line no-constructor-return
-    return new Proxy(this, {
-      get(target, p, receiver) {
-        switch (p) {
-          case 'append':
-          case 'set':
-            return (name, value) => {
-              validateHeaderName(name);
-              validateHeaderValue(name, String(value));
-              return URLSearchParams.prototype[p].call(
-                target,
-                String(name).toLowerCase(),
-                String(value)
-              );
-            };
+		// Returning a Proxy that will lowercase key names, validate parameters and sort keys
+		// eslint-disable-next-line no-constructor-return
+		return new Proxy(this, {
+			get(target, p, receiver) {
+				switch (p) {
+					case 'append':
+					case 'set':
+						return (name, value) => {
+							validateHeaderName(name);
+							validateHeaderValue(name, String(value));
+							return URLSearchParams.prototype[p].call(
+								target,
+								String(name).toLowerCase(),
+								String(value)
+							);
+						};
 
-          case 'delete':
-          case 'has':
-          case 'getAll':
-            return name => {
-              validateHeaderName(name);
-              return URLSearchParams.prototype[p].call(
-                target,
-                String(name).toLowerCase()
-              );
-            };
+					case 'delete':
+					case 'has':
+					case 'getAll':
+						return name => {
+							validateHeaderName(name);
+							return URLSearchParams.prototype[p].call(
+								target,
+								String(name).toLowerCase()
+							);
+						};
 
-          case 'keys':
-            return () => {
-              target.sort();
-              return new Set(URLSearchParams.prototype.keys.call(target)).keys();
-            };
+					case 'keys':
+						return () => {
+							target.sort();
+							return new Set(URLSearchParams.prototype.keys.call(target)).keys();
+						};
 
-          default:
-            return Reflect.get(target, p, receiver);
-        }
-      }
-    });
-    /* c8 ignore next */
-  }
+					default:
+						return Reflect.get(target, p, receiver);
+				}
+			}
+		});
+		/* c8 ignore next */
+	}
 
-  get [Symbol.toStringTag]() {
-    return this.constructor.name;
-  }
+	get [Symbol.toStringTag]() {
+		return this.constructor.name;
+	}
 
-  toString() {
-    return Object.prototype.toString.call(this);
-  }
+	toString() {
+		return Object.prototype.toString.call(this);
+	}
 
-  get(name) {
-    const values = this.getAll(name);
-    if (values.length === 0) {
-      return null;
-    }
+	get(name) {
+		const values = this.getAll(name);
+		if (values.length === 0) {
+			return null;
+		}
 
-    let value = values.join(', ');
-    if (/^content-encoding$/i.test(name)) {
-      value = value.toLowerCase();
-    }
+		let value = values.join(', ');
+		if (/^content-encoding$/i.test(name)) {
+			value = value.toLowerCase();
+		}
 
-    return value;
-  }
+		return value;
+	}
 
-  forEach(callback, thisArg = undefined) {
-    for (const name of this.keys()) {
-      Reflect.apply(callback, thisArg, [this.get(name), name, this]);
-    }
-  }
+	forEach(callback, thisArg = undefined) {
+		for (const name of this.keys()) {
+			Reflect.apply(callback, thisArg, [this.get(name), name, this]);
+		}
+	}
 
-  * values() {
-    for (const name of this.keys()) {
-      yield this.get(name);
-    }
-  }
+	* values() {
+		for (const name of this.keys()) {
+			yield this.get(name);
+		}
+	}
 
-  /**
-   * @type {() => IterableIterator<[string, string]>}
-   */
-  * entries() {
-    for (const name of this.keys()) {
-      yield [name, this.get(name)];
-    }
-  }
+	/**
+	 * @type {() => IterableIterator<[string, string]>}
+	 */
+	* entries() {
+		for (const name of this.keys()) {
+			yield [name, this.get(name)];
+		}
+	}
 
-  [Symbol.iterator]() {
-    return this.entries();
-  }
+	[Symbol.iterator]() {
+		return this.entries();
+	}
 
-  /**
-   * Node-fetch non-spec method
-   * returning all headers and their values as array
-   * @returns {Record<string, string[]>}
-   */
-  raw() {
-    return [...this.keys()].reduce((result, key) => {
-      result[key] = this.getAll(key);
-      return result;
-    }, {});
-  }
+	/**
+	 * Node-fetch non-spec method
+	 * returning all headers and their values as array
+	 * @returns {Record<string, string[]>}
+	 */
+	raw() {
+		return [...this.keys()].reduce((result, key) => {
+			result[key] = this.getAll(key);
+			return result;
+		}, {});
+	}
 
-  /**
-   * For better console.log(headers) and also to convert Headers into Node.js Request compatible format
-   */
-  [Symbol.for('nodejs.util.inspect.custom')]() {
-    return [...this.keys()].reduce((result, key) => {
-      const values = this.getAll(key);
-      // Http.request() only supports string as Host header.
-      // This hack makes specifying custom Host header possible.
-      if (key === 'host') {
-        result[key] = values[0];
-      } else {
-        result[key] = values.length > 1 ? values : values[0];
-      }
+	/**
+	 * For better console.log(headers) and also to convert Headers into Node.js Request compatible format
+	 */
+	[Symbol.for('nodejs.util.inspect.custom')]() {
+		return [...this.keys()].reduce((result, key) => {
+			const values = this.getAll(key);
+			// Http.request() only supports string as Host header.
+			// This hack makes specifying custom Host header possible.
+			if (key === 'host') {
+				result[key] = values[0];
+			} else {
+				result[key] = values.length > 1 ? values : values[0];
+			}
 
-      return result;
-    }, {});
-  }
+			return result;
+		}, {});
+	}
 }
 
 /**
@@ -31937,11 +31937,11 @@ class Headers extends URLSearchParams {
  * Only need to do it for overridden methods
  */
 Object.defineProperties(
-  Headers.prototype,
-  ['get', 'entries', 'forEach', 'values'].reduce((result, property) => {
-    result[property] = {enumerable: true};
-    return result;
-  }, {})
+	Headers.prototype,
+	['get', 'entries', 'forEach', 'values'].reduce((result, property) => {
+		result[property] = {enumerable: true};
+		return result;
+	}, {})
 );
 
 /**
@@ -31950,27 +31950,27 @@ Object.defineProperties(
  * @param {import('http').IncomingMessage['rawHeaders']} headers
  */
 function fromRawHeaders(headers = []) {
-  return new Headers(
-    headers
-      // Split into pairs
-      .reduce((result, value, index, array) => {
-        if (index % 2 === 0) {
-          result.push(array.slice(index, index + 2));
-        }
+	return new Headers(
+		headers
+			// Split into pairs
+			.reduce((result, value, index, array) => {
+				if (index % 2 === 0) {
+					result.push(array.slice(index, index + 2));
+				}
 
-        return result;
-      }, [])
-      .filter(([name, value]) => {
-        try {
-          validateHeaderName(name);
-          validateHeaderValue(name, String(value));
-          return true;
-        } catch {
-          return false;
-        }
-      })
+				return result;
+			}, [])
+			.filter(([name, value]) => {
+				try {
+					validateHeaderName(name);
+					validateHeaderValue(name, String(value));
+					return true;
+				} catch {
+					return false;
+				}
+			})
 
-  );
+	);
 }
 
 
@@ -32003,35 +32003,35 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var node_stream__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(7075);
 /* harmony import */ var node_buffer__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(4573);
 if (883 == __webpack_require__.j) {
-  /* harmony import */ var data_uri_to_buffer__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(564);
+	/* harmony import */ var data_uri_to_buffer__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(564);
 }
 if (883 == __webpack_require__.j) {
-  /* harmony import */ var _body_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(6023);
+	/* harmony import */ var _body_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(6023);
 }
 if (883 == __webpack_require__.j) {
-  /* harmony import */ var _response_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(3200);
+	/* harmony import */ var _response_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(3200);
 }
 if (883 == __webpack_require__.j) {
-  /* harmony import */ var _headers_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(3273);
+	/* harmony import */ var _headers_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(3273);
 }
 if (883 == __webpack_require__.j) {
-  /* harmony import */ var _request_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(5086);
+	/* harmony import */ var _request_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(5086);
 }
 if (883 == __webpack_require__.j) {
-  /* harmony import */ var _errors_fetch_error_js__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(7744);
+	/* harmony import */ var _errors_fetch_error_js__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(7744);
 }
 if (883 == __webpack_require__.j) {
-  /* harmony import */ var _errors_abort_error_js__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(6614);
+	/* harmony import */ var _errors_abort_error_js__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(6614);
 }
 if (883 == __webpack_require__.j) {
-  /* harmony import */ var _utils_is_redirect_js__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(7582);
+	/* harmony import */ var _utils_is_redirect_js__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(7582);
 }
 /* harmony import */ var formdata_polyfill_esm_min_js__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(142);
 if (883 == __webpack_require__.j) {
-  /* harmony import */ var _utils_is_js__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(145);
+	/* harmony import */ var _utils_is_js__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(145);
 }
 if (883 == __webpack_require__.j) {
-  /* harmony import */ var _utils_referrer_js__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(690);
+	/* harmony import */ var _utils_referrer_js__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(690);
 }
 /* harmony import */ var fetch_blob_from_js__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(5935);
 /**
@@ -32075,374 +32075,374 @@ const supportedSchemas = new Set(['data:', 'http:', 'https:']);
  * @return  {Promise<import('./response').default>}
  */
 async function fetch(url, options_) {
-  return new Promise((resolve, reject) => {
-    // Build request object
-    const request = new _request_js__WEBPACK_IMPORTED_MODULE_9__/* ["default"] */ .A(url, options_);
-    const {parsedURL, options} = (0,_request_js__WEBPACK_IMPORTED_MODULE_9__/* .getNodeRequestOptions */ .E)(request);
-    if (!supportedSchemas.has(parsedURL.protocol)) {
-      throw new TypeError(`node-fetch cannot load ${url}. URL scheme "${parsedURL.protocol.replace(/:$/, '')}" is not supported.`);
-    }
+	return new Promise((resolve, reject) => {
+		// Build request object
+		const request = new _request_js__WEBPACK_IMPORTED_MODULE_9__/* ["default"] */ .A(url, options_);
+		const {parsedURL, options} = (0,_request_js__WEBPACK_IMPORTED_MODULE_9__/* .getNodeRequestOptions */ .E)(request);
+		if (!supportedSchemas.has(parsedURL.protocol)) {
+			throw new TypeError(`node-fetch cannot load ${url}. URL scheme "${parsedURL.protocol.replace(/:$/, '')}" is not supported.`);
+		}
 
-    if (parsedURL.protocol === 'data:') {
-      const data = (0,data_uri_to_buffer__WEBPACK_IMPORTED_MODULE_5__/* ["default"] */ .A)(request.url);
-      const response = new _response_js__WEBPACK_IMPORTED_MODULE_7__/* ["default"] */ .A(data, {headers: {'Content-Type': data.typeFull}});
-      resolve(response);
-      return;
-    }
+		if (parsedURL.protocol === 'data:') {
+			const data = (0,data_uri_to_buffer__WEBPACK_IMPORTED_MODULE_5__/* ["default"] */ .A)(request.url);
+			const response = new _response_js__WEBPACK_IMPORTED_MODULE_7__/* ["default"] */ .A(data, {headers: {'Content-Type': data.typeFull}});
+			resolve(response);
+			return;
+		}
 
-    // Wrap http.request into fetch
-    const send = (parsedURL.protocol === 'https:' ? node_https__WEBPACK_IMPORTED_MODULE_1__ : node_http__WEBPACK_IMPORTED_MODULE_0__).request;
-    const {signal} = request;
-    let response = null;
+		// Wrap http.request into fetch
+		const send = (parsedURL.protocol === 'https:' ? node_https__WEBPACK_IMPORTED_MODULE_1__ : node_http__WEBPACK_IMPORTED_MODULE_0__).request;
+		const {signal} = request;
+		let response = null;
 
-    const abort = () => {
-      const error = new _errors_abort_error_js__WEBPACK_IMPORTED_MODULE_11__/* .AbortError */ .l('The operation was aborted.');
-      reject(error);
-      if (request.body && request.body instanceof node_stream__WEBPACK_IMPORTED_MODULE_3__.Readable) {
-        request.body.destroy(error);
-      }
+		const abort = () => {
+			const error = new _errors_abort_error_js__WEBPACK_IMPORTED_MODULE_11__/* .AbortError */ .l('The operation was aborted.');
+			reject(error);
+			if (request.body && request.body instanceof node_stream__WEBPACK_IMPORTED_MODULE_3__.Readable) {
+				request.body.destroy(error);
+			}
 
-      if (!response || !response.body) {
-        return;
-      }
+			if (!response || !response.body) {
+				return;
+			}
 
-      response.body.emit('error', error);
-    };
+			response.body.emit('error', error);
+		};
 
-    if (signal && signal.aborted) {
-      abort();
-      return;
-    }
+		if (signal && signal.aborted) {
+			abort();
+			return;
+		}
 
-    const abortAndFinalize = () => {
-      abort();
-      finalize();
-    };
+		const abortAndFinalize = () => {
+			abort();
+			finalize();
+		};
 
-    // Send request
-    const request_ = send(parsedURL.toString(), options);
+		// Send request
+		const request_ = send(parsedURL.toString(), options);
 
-    if (signal) {
-      signal.addEventListener('abort', abortAndFinalize);
-    }
+		if (signal) {
+			signal.addEventListener('abort', abortAndFinalize);
+		}
 
-    const finalize = () => {
-      request_.abort();
-      if (signal) {
-        signal.removeEventListener('abort', abortAndFinalize);
-      }
-    };
+		const finalize = () => {
+			request_.abort();
+			if (signal) {
+				signal.removeEventListener('abort', abortAndFinalize);
+			}
+		};
 
-    request_.on('error', error => {
-      reject(new _errors_fetch_error_js__WEBPACK_IMPORTED_MODULE_10__/* .FetchError */ .f(`request to ${request.url} failed, reason: ${error.message}`, 'system', error));
-      finalize();
-    });
+		request_.on('error', error => {
+			reject(new _errors_fetch_error_js__WEBPACK_IMPORTED_MODULE_10__/* .FetchError */ .f(`request to ${request.url} failed, reason: ${error.message}`, 'system', error));
+			finalize();
+		});
 
-    fixResponseChunkedTransferBadEnding(request_, error => {
-      if (response && response.body) {
-        response.body.destroy(error);
-      }
-    });
+		fixResponseChunkedTransferBadEnding(request_, error => {
+			if (response && response.body) {
+				response.body.destroy(error);
+			}
+		});
 
-    /* c8 ignore next 18 */
-    if (process.version < 'v14') {
-      // Before Node.js 14, pipeline() does not fully support async iterators and does not always
-      // properly handle when the socket close/end events are out of order.
-      request_.on('socket', s => {
-        let endedWithEventsCount;
-        s.prependListener('end', () => {
-          endedWithEventsCount = s._eventsCount;
-        });
-        s.prependListener('close', hadError => {
-          // if end happened before close but the socket didn't emit an error, do it now
-          if (response && endedWithEventsCount < s._eventsCount && !hadError) {
-            const error = new Error('Premature close');
-            error.code = 'ERR_STREAM_PREMATURE_CLOSE';
-            response.body.emit('error', error);
-          }
-        });
-      });
-    }
+		/* c8 ignore next 18 */
+		if (process.version < 'v14') {
+			// Before Node.js 14, pipeline() does not fully support async iterators and does not always
+			// properly handle when the socket close/end events are out of order.
+			request_.on('socket', s => {
+				let endedWithEventsCount;
+				s.prependListener('end', () => {
+					endedWithEventsCount = s._eventsCount;
+				});
+				s.prependListener('close', hadError => {
+					// if end happened before close but the socket didn't emit an error, do it now
+					if (response && endedWithEventsCount < s._eventsCount && !hadError) {
+						const error = new Error('Premature close');
+						error.code = 'ERR_STREAM_PREMATURE_CLOSE';
+						response.body.emit('error', error);
+					}
+				});
+			});
+		}
 
-    request_.on('response', response_ => {
-      request_.setTimeout(0);
-      const headers = (0,_headers_js__WEBPACK_IMPORTED_MODULE_8__/* .fromRawHeaders */ .$)(response_.rawHeaders);
+		request_.on('response', response_ => {
+			request_.setTimeout(0);
+			const headers = (0,_headers_js__WEBPACK_IMPORTED_MODULE_8__/* .fromRawHeaders */ .$)(response_.rawHeaders);
 
-      // HTTP fetch step 5
-      if ((0,_utils_is_redirect_js__WEBPACK_IMPORTED_MODULE_12__/* .isRedirect */ .N)(response_.statusCode)) {
-        // HTTP fetch step 5.2
-        const location = headers.get('Location');
+			// HTTP fetch step 5
+			if ((0,_utils_is_redirect_js__WEBPACK_IMPORTED_MODULE_12__/* .isRedirect */ .N)(response_.statusCode)) {
+				// HTTP fetch step 5.2
+				const location = headers.get('Location');
 
-        // HTTP fetch step 5.3
-        let locationURL = null;
-        try {
-          locationURL = location === null ? null : new URL(location, request.url);
-        } catch {
-          // error here can only be invalid URL in Location: header
-          // do not throw when options.redirect == manual
-          // let the user extract the errorneous redirect URL
-          if (request.redirect !== 'manual') {
-            reject(new _errors_fetch_error_js__WEBPACK_IMPORTED_MODULE_10__/* .FetchError */ .f(`uri requested responds with an invalid redirect URL: ${location}`, 'invalid-redirect'));
-            finalize();
-            return;
-          }
-        }
+				// HTTP fetch step 5.3
+				let locationURL = null;
+				try {
+					locationURL = location === null ? null : new URL(location, request.url);
+				} catch {
+					// error here can only be invalid URL in Location: header
+					// do not throw when options.redirect == manual
+					// let the user extract the errorneous redirect URL
+					if (request.redirect !== 'manual') {
+						reject(new _errors_fetch_error_js__WEBPACK_IMPORTED_MODULE_10__/* .FetchError */ .f(`uri requested responds with an invalid redirect URL: ${location}`, 'invalid-redirect'));
+						finalize();
+						return;
+					}
+				}
 
-        // HTTP fetch step 5.5
-        switch (request.redirect) {
-          case 'error':
-            reject(new _errors_fetch_error_js__WEBPACK_IMPORTED_MODULE_10__/* .FetchError */ .f(`uri requested responds with a redirect, redirect mode is set to error: ${request.url}`, 'no-redirect'));
-            finalize();
-            return;
-          case 'manual':
-            // Nothing to do
-            break;
-          case 'follow': {
-            // HTTP-redirect fetch step 2
-            if (locationURL === null) {
-              break;
-            }
+				// HTTP fetch step 5.5
+				switch (request.redirect) {
+					case 'error':
+						reject(new _errors_fetch_error_js__WEBPACK_IMPORTED_MODULE_10__/* .FetchError */ .f(`uri requested responds with a redirect, redirect mode is set to error: ${request.url}`, 'no-redirect'));
+						finalize();
+						return;
+					case 'manual':
+						// Nothing to do
+						break;
+					case 'follow': {
+						// HTTP-redirect fetch step 2
+						if (locationURL === null) {
+							break;
+						}
 
-            // HTTP-redirect fetch step 5
-            if (request.counter >= request.follow) {
-              reject(new _errors_fetch_error_js__WEBPACK_IMPORTED_MODULE_10__/* .FetchError */ .f(`maximum redirect reached at: ${request.url}`, 'max-redirect'));
-              finalize();
-              return;
-            }
+						// HTTP-redirect fetch step 5
+						if (request.counter >= request.follow) {
+							reject(new _errors_fetch_error_js__WEBPACK_IMPORTED_MODULE_10__/* .FetchError */ .f(`maximum redirect reached at: ${request.url}`, 'max-redirect'));
+							finalize();
+							return;
+						}
 
-            // HTTP-redirect fetch step 6 (counter increment)
-            // Create a new Request object.
-            const requestOptions = {
-              headers: new _headers_js__WEBPACK_IMPORTED_MODULE_8__/* ["default"] */ .A(request.headers),
-              follow: request.follow,
-              counter: request.counter + 1,
-              agent: request.agent,
-              compress: request.compress,
-              method: request.method,
-              body: (0,_body_js__WEBPACK_IMPORTED_MODULE_6__/* .clone */ .o8)(request),
-              signal: request.signal,
-              size: request.size,
-              referrer: request.referrer,
-              referrerPolicy: request.referrerPolicy
-            };
+						// HTTP-redirect fetch step 6 (counter increment)
+						// Create a new Request object.
+						const requestOptions = {
+							headers: new _headers_js__WEBPACK_IMPORTED_MODULE_8__/* ["default"] */ .A(request.headers),
+							follow: request.follow,
+							counter: request.counter + 1,
+							agent: request.agent,
+							compress: request.compress,
+							method: request.method,
+							body: (0,_body_js__WEBPACK_IMPORTED_MODULE_6__/* .clone */ .o8)(request),
+							signal: request.signal,
+							size: request.size,
+							referrer: request.referrer,
+							referrerPolicy: request.referrerPolicy
+						};
 
-            // when forwarding sensitive headers like "Authorization",
-            // "WWW-Authenticate", and "Cookie" to untrusted targets,
-            // headers will be ignored when following a redirect to a domain
-            // that is not a subdomain match or exact match of the initial domain.
-            // For example, a redirect from "foo.com" to either "foo.com" or "sub.foo.com"
-            // will forward the sensitive headers, but a redirect to "bar.com" will not.
-            // headers will also be ignored when following a redirect to a domain using
-            // a different protocol. For example, a redirect from "https://foo.com" to "http://foo.com"
-            // will not forward the sensitive headers
-            if (!(0,_utils_is_js__WEBPACK_IMPORTED_MODULE_14__/* .isDomainOrSubdomain */ .MM)(request.url, locationURL) || !(0,_utils_is_js__WEBPACK_IMPORTED_MODULE_14__/* .isSameProtocol */ .Zh)(request.url, locationURL)) {
-              for (const name of ['authorization', 'www-authenticate', 'cookie', 'cookie2']) {
-                requestOptions.headers.delete(name);
-              }
-            }
+						// when forwarding sensitive headers like "Authorization",
+						// "WWW-Authenticate", and "Cookie" to untrusted targets,
+						// headers will be ignored when following a redirect to a domain
+						// that is not a subdomain match or exact match of the initial domain.
+						// For example, a redirect from "foo.com" to either "foo.com" or "sub.foo.com"
+						// will forward the sensitive headers, but a redirect to "bar.com" will not.
+						// headers will also be ignored when following a redirect to a domain using
+						// a different protocol. For example, a redirect from "https://foo.com" to "http://foo.com"
+						// will not forward the sensitive headers
+						if (!(0,_utils_is_js__WEBPACK_IMPORTED_MODULE_14__/* .isDomainOrSubdomain */ .MM)(request.url, locationURL) || !(0,_utils_is_js__WEBPACK_IMPORTED_MODULE_14__/* .isSameProtocol */ .Zh)(request.url, locationURL)) {
+							for (const name of ['authorization', 'www-authenticate', 'cookie', 'cookie2']) {
+								requestOptions.headers.delete(name);
+							}
+						}
 
-            // HTTP-redirect fetch step 9
-            if (response_.statusCode !== 303 && request.body && options_.body instanceof node_stream__WEBPACK_IMPORTED_MODULE_3__.Readable) {
-              reject(new _errors_fetch_error_js__WEBPACK_IMPORTED_MODULE_10__/* .FetchError */ .f('Cannot follow redirect with body being a readable stream', 'unsupported-redirect'));
-              finalize();
-              return;
-            }
+						// HTTP-redirect fetch step 9
+						if (response_.statusCode !== 303 && request.body && options_.body instanceof node_stream__WEBPACK_IMPORTED_MODULE_3__.Readable) {
+							reject(new _errors_fetch_error_js__WEBPACK_IMPORTED_MODULE_10__/* .FetchError */ .f('Cannot follow redirect with body being a readable stream', 'unsupported-redirect'));
+							finalize();
+							return;
+						}
 
-            // HTTP-redirect fetch step 11
-            if (response_.statusCode === 303 || ((response_.statusCode === 301 || response_.statusCode === 302) && request.method === 'POST')) {
-              requestOptions.method = 'GET';
-              requestOptions.body = undefined;
-              requestOptions.headers.delete('content-length');
-            }
+						// HTTP-redirect fetch step 11
+						if (response_.statusCode === 303 || ((response_.statusCode === 301 || response_.statusCode === 302) && request.method === 'POST')) {
+							requestOptions.method = 'GET';
+							requestOptions.body = undefined;
+							requestOptions.headers.delete('content-length');
+						}
 
-            // HTTP-redirect fetch step 14
-            const responseReferrerPolicy = (0,_utils_referrer_js__WEBPACK_IMPORTED_MODULE_15__/* .parseReferrerPolicyFromHeader */ .gn)(headers);
-            if (responseReferrerPolicy) {
-              requestOptions.referrerPolicy = responseReferrerPolicy;
-            }
+						// HTTP-redirect fetch step 14
+						const responseReferrerPolicy = (0,_utils_referrer_js__WEBPACK_IMPORTED_MODULE_15__/* .parseReferrerPolicyFromHeader */ .gn)(headers);
+						if (responseReferrerPolicy) {
+							requestOptions.referrerPolicy = responseReferrerPolicy;
+						}
 
-            // HTTP-redirect fetch step 15
-            resolve(fetch(new _request_js__WEBPACK_IMPORTED_MODULE_9__/* ["default"] */ .A(locationURL, requestOptions)));
-            finalize();
-            return;
-          }
+						// HTTP-redirect fetch step 15
+						resolve(fetch(new _request_js__WEBPACK_IMPORTED_MODULE_9__/* ["default"] */ .A(locationURL, requestOptions)));
+						finalize();
+						return;
+					}
 
-          default:
-            return reject(new TypeError(`Redirect option '${request.redirect}' is not a valid value of RequestRedirect`));
-        }
-      }
+					default:
+						return reject(new TypeError(`Redirect option '${request.redirect}' is not a valid value of RequestRedirect`));
+				}
+			}
 
-      // Prepare response
-      if (signal) {
-        response_.once('end', () => {
-          signal.removeEventListener('abort', abortAndFinalize);
-        });
-      }
+			// Prepare response
+			if (signal) {
+				response_.once('end', () => {
+					signal.removeEventListener('abort', abortAndFinalize);
+				});
+			}
 
-      let body = (0,node_stream__WEBPACK_IMPORTED_MODULE_3__.pipeline)(response_, new node_stream__WEBPACK_IMPORTED_MODULE_3__.PassThrough(), error => {
-        if (error) {
-          reject(error);
-        }
-      });
-      // see https://github.com/nodejs/node/pull/29376
-      /* c8 ignore next 3 */
-      if (process.version < 'v12.10') {
-        response_.on('aborted', abortAndFinalize);
-      }
+			let body = (0,node_stream__WEBPACK_IMPORTED_MODULE_3__.pipeline)(response_, new node_stream__WEBPACK_IMPORTED_MODULE_3__.PassThrough(), error => {
+				if (error) {
+					reject(error);
+				}
+			});
+			// see https://github.com/nodejs/node/pull/29376
+			/* c8 ignore next 3 */
+			if (process.version < 'v12.10') {
+				response_.on('aborted', abortAndFinalize);
+			}
 
-      const responseOptions = {
-        url: request.url,
-        status: response_.statusCode,
-        statusText: response_.statusMessage,
-        headers,
-        size: request.size,
-        counter: request.counter,
-        highWaterMark: request.highWaterMark
-      };
+			const responseOptions = {
+				url: request.url,
+				status: response_.statusCode,
+				statusText: response_.statusMessage,
+				headers,
+				size: request.size,
+				counter: request.counter,
+				highWaterMark: request.highWaterMark
+			};
 
-      // HTTP-network fetch step 12.1.1.3
-      const codings = headers.get('Content-Encoding');
+			// HTTP-network fetch step 12.1.1.3
+			const codings = headers.get('Content-Encoding');
 
-      // HTTP-network fetch step 12.1.1.4: handle content codings
+			// HTTP-network fetch step 12.1.1.4: handle content codings
 
-      // in following scenarios we ignore compression support
-      // 1. compression support is disabled
-      // 2. HEAD request
-      // 3. no Content-Encoding header
-      // 4. no content response (204)
-      // 5. content not modified response (304)
-      if (!request.compress || request.method === 'HEAD' || codings === null || response_.statusCode === 204 || response_.statusCode === 304) {
-        response = new _response_js__WEBPACK_IMPORTED_MODULE_7__/* ["default"] */ .A(body, responseOptions);
-        resolve(response);
-        return;
-      }
+			// in following scenarios we ignore compression support
+			// 1. compression support is disabled
+			// 2. HEAD request
+			// 3. no Content-Encoding header
+			// 4. no content response (204)
+			// 5. content not modified response (304)
+			if (!request.compress || request.method === 'HEAD' || codings === null || response_.statusCode === 204 || response_.statusCode === 304) {
+				response = new _response_js__WEBPACK_IMPORTED_MODULE_7__/* ["default"] */ .A(body, responseOptions);
+				resolve(response);
+				return;
+			}
 
-      // For Node v6+
-      // Be less strict when decoding compressed responses, since sometimes
-      // servers send slightly invalid responses that are still accepted
-      // by common browsers.
-      // Always using Z_SYNC_FLUSH is what cURL does.
-      const zlibOptions = {
-        flush: node_zlib__WEBPACK_IMPORTED_MODULE_2__.Z_SYNC_FLUSH,
-        finishFlush: node_zlib__WEBPACK_IMPORTED_MODULE_2__.Z_SYNC_FLUSH
-      };
+			// For Node v6+
+			// Be less strict when decoding compressed responses, since sometimes
+			// servers send slightly invalid responses that are still accepted
+			// by common browsers.
+			// Always using Z_SYNC_FLUSH is what cURL does.
+			const zlibOptions = {
+				flush: node_zlib__WEBPACK_IMPORTED_MODULE_2__.Z_SYNC_FLUSH,
+				finishFlush: node_zlib__WEBPACK_IMPORTED_MODULE_2__.Z_SYNC_FLUSH
+			};
 
-      // For gzip
-      if (codings === 'gzip' || codings === 'x-gzip') {
-        body = (0,node_stream__WEBPACK_IMPORTED_MODULE_3__.pipeline)(body, node_zlib__WEBPACK_IMPORTED_MODULE_2__.createGunzip(zlibOptions), error => {
-          if (error) {
-            reject(error);
-          }
-        });
-        response = new _response_js__WEBPACK_IMPORTED_MODULE_7__/* ["default"] */ .A(body, responseOptions);
-        resolve(response);
-        return;
-      }
+			// For gzip
+			if (codings === 'gzip' || codings === 'x-gzip') {
+				body = (0,node_stream__WEBPACK_IMPORTED_MODULE_3__.pipeline)(body, node_zlib__WEBPACK_IMPORTED_MODULE_2__.createGunzip(zlibOptions), error => {
+					if (error) {
+						reject(error);
+					}
+				});
+				response = new _response_js__WEBPACK_IMPORTED_MODULE_7__/* ["default"] */ .A(body, responseOptions);
+				resolve(response);
+				return;
+			}
 
-      // For deflate
-      if (codings === 'deflate' || codings === 'x-deflate') {
-        // Handle the infamous raw deflate response from old servers
-        // a hack for old IIS and Apache servers
-        const raw = (0,node_stream__WEBPACK_IMPORTED_MODULE_3__.pipeline)(response_, new node_stream__WEBPACK_IMPORTED_MODULE_3__.PassThrough(), error => {
-          if (error) {
-            reject(error);
-          }
-        });
-        raw.once('data', chunk => {
-          // See http://stackoverflow.com/questions/37519828
-          if ((chunk[0] & 0x0F) === 0x08) {
-            body = (0,node_stream__WEBPACK_IMPORTED_MODULE_3__.pipeline)(body, node_zlib__WEBPACK_IMPORTED_MODULE_2__.createInflate(), error => {
-              if (error) {
-                reject(error);
-              }
-            });
-          } else {
-            body = (0,node_stream__WEBPACK_IMPORTED_MODULE_3__.pipeline)(body, node_zlib__WEBPACK_IMPORTED_MODULE_2__.createInflateRaw(), error => {
-              if (error) {
-                reject(error);
-              }
-            });
-          }
+			// For deflate
+			if (codings === 'deflate' || codings === 'x-deflate') {
+				// Handle the infamous raw deflate response from old servers
+				// a hack for old IIS and Apache servers
+				const raw = (0,node_stream__WEBPACK_IMPORTED_MODULE_3__.pipeline)(response_, new node_stream__WEBPACK_IMPORTED_MODULE_3__.PassThrough(), error => {
+					if (error) {
+						reject(error);
+					}
+				});
+				raw.once('data', chunk => {
+					// See http://stackoverflow.com/questions/37519828
+					if ((chunk[0] & 0x0F) === 0x08) {
+						body = (0,node_stream__WEBPACK_IMPORTED_MODULE_3__.pipeline)(body, node_zlib__WEBPACK_IMPORTED_MODULE_2__.createInflate(), error => {
+							if (error) {
+								reject(error);
+							}
+						});
+					} else {
+						body = (0,node_stream__WEBPACK_IMPORTED_MODULE_3__.pipeline)(body, node_zlib__WEBPACK_IMPORTED_MODULE_2__.createInflateRaw(), error => {
+							if (error) {
+								reject(error);
+							}
+						});
+					}
 
-          response = new _response_js__WEBPACK_IMPORTED_MODULE_7__/* ["default"] */ .A(body, responseOptions);
-          resolve(response);
-        });
-        raw.once('end', () => {
-          // Some old IIS servers return zero-length OK deflate responses, so
-          // 'data' is never emitted. See https://github.com/node-fetch/node-fetch/pull/903
-          if (!response) {
-            response = new _response_js__WEBPACK_IMPORTED_MODULE_7__/* ["default"] */ .A(body, responseOptions);
-            resolve(response);
-          }
-        });
-        return;
-      }
+					response = new _response_js__WEBPACK_IMPORTED_MODULE_7__/* ["default"] */ .A(body, responseOptions);
+					resolve(response);
+				});
+				raw.once('end', () => {
+					// Some old IIS servers return zero-length OK deflate responses, so
+					// 'data' is never emitted. See https://github.com/node-fetch/node-fetch/pull/903
+					if (!response) {
+						response = new _response_js__WEBPACK_IMPORTED_MODULE_7__/* ["default"] */ .A(body, responseOptions);
+						resolve(response);
+					}
+				});
+				return;
+			}
 
-      // For br
-      if (codings === 'br') {
-        body = (0,node_stream__WEBPACK_IMPORTED_MODULE_3__.pipeline)(body, node_zlib__WEBPACK_IMPORTED_MODULE_2__.createBrotliDecompress(), error => {
-          if (error) {
-            reject(error);
-          }
-        });
-        response = new _response_js__WEBPACK_IMPORTED_MODULE_7__/* ["default"] */ .A(body, responseOptions);
-        resolve(response);
-        return;
-      }
+			// For br
+			if (codings === 'br') {
+				body = (0,node_stream__WEBPACK_IMPORTED_MODULE_3__.pipeline)(body, node_zlib__WEBPACK_IMPORTED_MODULE_2__.createBrotliDecompress(), error => {
+					if (error) {
+						reject(error);
+					}
+				});
+				response = new _response_js__WEBPACK_IMPORTED_MODULE_7__/* ["default"] */ .A(body, responseOptions);
+				resolve(response);
+				return;
+			}
 
-      // Otherwise, use response as-is
-      response = new _response_js__WEBPACK_IMPORTED_MODULE_7__/* ["default"] */ .A(body, responseOptions);
-      resolve(response);
-    });
+			// Otherwise, use response as-is
+			response = new _response_js__WEBPACK_IMPORTED_MODULE_7__/* ["default"] */ .A(body, responseOptions);
+			resolve(response);
+		});
 
-    // eslint-disable-next-line promise/prefer-await-to-then
-    (0,_body_js__WEBPACK_IMPORTED_MODULE_6__/* .writeToStream */ .nR)(request_, request).catch(reject);
-  });
+		// eslint-disable-next-line promise/prefer-await-to-then
+		(0,_body_js__WEBPACK_IMPORTED_MODULE_6__/* .writeToStream */ .nR)(request_, request).catch(reject);
+	});
 }
 
 function fixResponseChunkedTransferBadEnding(request, errorCallback) {
-  const LAST_CHUNK = node_buffer__WEBPACK_IMPORTED_MODULE_4__.Buffer.from('0\r\n\r\n');
+	const LAST_CHUNK = node_buffer__WEBPACK_IMPORTED_MODULE_4__.Buffer.from('0\r\n\r\n');
 
-  let isChunkedTransfer = false;
-  let properLastChunkReceived = false;
-  let previousChunk;
+	let isChunkedTransfer = false;
+	let properLastChunkReceived = false;
+	let previousChunk;
 
-  request.on('response', response => {
-    const {headers} = response;
-    isChunkedTransfer = headers['transfer-encoding'] === 'chunked' && !headers['content-length'];
-  });
+	request.on('response', response => {
+		const {headers} = response;
+		isChunkedTransfer = headers['transfer-encoding'] === 'chunked' && !headers['content-length'];
+	});
 
-  request.on('socket', socket => {
-    const onSocketClose = () => {
-      if (isChunkedTransfer && !properLastChunkReceived) {
-        const error = new Error('Premature close');
-        error.code = 'ERR_STREAM_PREMATURE_CLOSE';
-        errorCallback(error);
-      }
-    };
+	request.on('socket', socket => {
+		const onSocketClose = () => {
+			if (isChunkedTransfer && !properLastChunkReceived) {
+				const error = new Error('Premature close');
+				error.code = 'ERR_STREAM_PREMATURE_CLOSE';
+				errorCallback(error);
+			}
+		};
 
-    const onData = buf => {
-      properLastChunkReceived = node_buffer__WEBPACK_IMPORTED_MODULE_4__.Buffer.compare(buf.slice(-5), LAST_CHUNK) === 0;
+		const onData = buf => {
+			properLastChunkReceived = node_buffer__WEBPACK_IMPORTED_MODULE_4__.Buffer.compare(buf.slice(-5), LAST_CHUNK) === 0;
 
-      // Sometimes final 0-length chunk and end of message code are in separate packets
-      if (!properLastChunkReceived && previousChunk) {
-        properLastChunkReceived = (
-          node_buffer__WEBPACK_IMPORTED_MODULE_4__.Buffer.compare(previousChunk.slice(-3), LAST_CHUNK.slice(0, 3)) === 0 &&
-          node_buffer__WEBPACK_IMPORTED_MODULE_4__.Buffer.compare(buf.slice(-2), LAST_CHUNK.slice(3)) === 0
-        );
-      }
+			// Sometimes final 0-length chunk and end of message code are in separate packets
+			if (!properLastChunkReceived && previousChunk) {
+				properLastChunkReceived = (
+					node_buffer__WEBPACK_IMPORTED_MODULE_4__.Buffer.compare(previousChunk.slice(-3), LAST_CHUNK.slice(0, 3)) === 0 &&
+					node_buffer__WEBPACK_IMPORTED_MODULE_4__.Buffer.compare(buf.slice(-2), LAST_CHUNK.slice(3)) === 0
+				);
+			}
 
-      previousChunk = buf;
-    };
+			previousChunk = buf;
+		};
 
-    socket.prependListener('close', onSocketClose);
-    socket.on('data', onData);
+		socket.prependListener('close', onSocketClose);
+		socket.on('data', onData);
 
-    request.on('close', () => {
-      socket.removeListener('close', onSocketClose);
-      socket.removeListener('data', onData);
-    });
-  });
+		request.on('close', () => {
+			socket.removeListener('close', onSocketClose);
+			socket.removeListener('data', onData);
+		});
+	});
 }
 
 
@@ -32462,7 +32462,7 @@ function fixResponseChunkedTransferBadEnding(request, errorCallback) {
 /* harmony import */ var _body_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(6023);
 /* harmony import */ var _utils_is_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(145);
 if (883 == __webpack_require__.j) {
-  /* harmony import */ var _utils_get_search_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(2270);
+	/* harmony import */ var _utils_get_search_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(2270);
 }
 /* harmony import */ var _utils_referrer_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(690);
 /**
@@ -32490,15 +32490,15 @@ const INTERNALS = Symbol('Request internals');
  * @return {boolean}
  */
 const isRequest = object => {
-  return (
-    typeof object === 'object' &&
-    typeof object[INTERNALS] === 'object'
-  );
+	return (
+		typeof object === 'object' &&
+		typeof object[INTERNALS] === 'object'
+	);
 };
 
 const doBadDataWarn = (0,node_util__WEBPACK_IMPORTED_MODULE_1__.deprecate)(() => {},
-  '.data is not a valid RequestInit property, use .body instead',
-  'https://github.com/node-fetch/node-fetch/issues/1000 (request)');
+	'.data is not a valid RequestInit property, use .body instead',
+	'https://github.com/node-fetch/node-fetch/issues/1000 (request)');
 
 /**
  * Request class
@@ -32510,176 +32510,176 @@ const doBadDataWarn = (0,node_util__WEBPACK_IMPORTED_MODULE_1__.deprecate)(() =>
  * @return  Void
  */
 class Request extends _body_js__WEBPACK_IMPORTED_MODULE_3__/* ["default"] */ .Ay {
-  constructor(input, init = {}) {
-    let parsedURL;
+	constructor(input, init = {}) {
+		let parsedURL;
 
-    // Normalize input and force URL to be encoded as UTF-8 (https://github.com/node-fetch/node-fetch/issues/245)
-    if (isRequest(input)) {
-      parsedURL = new URL(input.url);
-    } else {
-      parsedURL = new URL(input);
-      input = {};
-    }
+		// Normalize input and force URL to be encoded as UTF-8 (https://github.com/node-fetch/node-fetch/issues/245)
+		if (isRequest(input)) {
+			parsedURL = new URL(input.url);
+		} else {
+			parsedURL = new URL(input);
+			input = {};
+		}
 
-    if (parsedURL.username !== '' || parsedURL.password !== '') {
-      throw new TypeError(`${parsedURL} is an url with embedded credentials.`);
-    }
+		if (parsedURL.username !== '' || parsedURL.password !== '') {
+			throw new TypeError(`${parsedURL} is an url with embedded credentials.`);
+		}
 
-    let method = init.method || input.method || 'GET';
-    if (/^(delete|get|head|options|post|put)$/i.test(method)) {
-      method = method.toUpperCase();
-    }
+		let method = init.method || input.method || 'GET';
+		if (/^(delete|get|head|options|post|put)$/i.test(method)) {
+			method = method.toUpperCase();
+		}
 
-    if (!isRequest(init) && 'data' in init) {
-      doBadDataWarn();
-    }
+		if (!isRequest(init) && 'data' in init) {
+			doBadDataWarn();
+		}
 
-    // eslint-disable-next-line no-eq-null, eqeqeq
-    if ((init.body != null || (isRequest(input) && input.body !== null)) &&
-      (method === 'GET' || method === 'HEAD')) {
-      throw new TypeError('Request with GET/HEAD method cannot have body');
-    }
+		// eslint-disable-next-line no-eq-null, eqeqeq
+		if ((init.body != null || (isRequest(input) && input.body !== null)) &&
+			(method === 'GET' || method === 'HEAD')) {
+			throw new TypeError('Request with GET/HEAD method cannot have body');
+		}
 
-    const inputBody = init.body ?
-      init.body :
-      (isRequest(input) && input.body !== null ?
-        (0,_body_js__WEBPACK_IMPORTED_MODULE_3__/* .clone */ .o8)(input) :
-        null);
+		const inputBody = init.body ?
+			init.body :
+			(isRequest(input) && input.body !== null ?
+				(0,_body_js__WEBPACK_IMPORTED_MODULE_3__/* .clone */ .o8)(input) :
+				null);
 
-    super(inputBody, {
-      size: init.size || input.size || 0
-    });
+		super(inputBody, {
+			size: init.size || input.size || 0
+		});
 
-    const headers = new _headers_js__WEBPACK_IMPORTED_MODULE_2__/* ["default"] */ .A(init.headers || input.headers || {});
+		const headers = new _headers_js__WEBPACK_IMPORTED_MODULE_2__/* ["default"] */ .A(init.headers || input.headers || {});
 
-    if (inputBody !== null && !headers.has('Content-Type')) {
-      const contentType = (0,_body_js__WEBPACK_IMPORTED_MODULE_3__/* .extractContentType */ .jY)(inputBody, this);
-      if (contentType) {
-        headers.set('Content-Type', contentType);
-      }
-    }
+		if (inputBody !== null && !headers.has('Content-Type')) {
+			const contentType = (0,_body_js__WEBPACK_IMPORTED_MODULE_3__/* .extractContentType */ .jY)(inputBody, this);
+			if (contentType) {
+				headers.set('Content-Type', contentType);
+			}
+		}
 
-    let signal = isRequest(input) ?
-      input.signal :
-      null;
-    if ('signal' in init) {
-      signal = init.signal;
-    }
+		let signal = isRequest(input) ?
+			input.signal :
+			null;
+		if ('signal' in init) {
+			signal = init.signal;
+		}
 
-    // eslint-disable-next-line no-eq-null, eqeqeq
-    if (signal != null && !(0,_utils_is_js__WEBPACK_IMPORTED_MODULE_4__/* .isAbortSignal */ .L3)(signal)) {
-      throw new TypeError('Expected signal to be an instanceof AbortSignal or EventTarget');
-    }
+		// eslint-disable-next-line no-eq-null, eqeqeq
+		if (signal != null && !(0,_utils_is_js__WEBPACK_IMPORTED_MODULE_4__/* .isAbortSignal */ .L3)(signal)) {
+			throw new TypeError('Expected signal to be an instanceof AbortSignal or EventTarget');
+		}
 
-    // §5.4, Request constructor steps, step 15.1
-    // eslint-disable-next-line no-eq-null, eqeqeq
-    let referrer = init.referrer == null ? input.referrer : init.referrer;
-    if (referrer === '') {
-      // §5.4, Request constructor steps, step 15.2
-      referrer = 'no-referrer';
-    } else if (referrer) {
-      // §5.4, Request constructor steps, step 15.3.1, 15.3.2
-      const parsedReferrer = new URL(referrer);
-      // §5.4, Request constructor steps, step 15.3.3, 15.3.4
-      referrer = /^about:(\/\/)?client$/.test(parsedReferrer) ? 'client' : parsedReferrer;
-    } else {
-      referrer = undefined;
-    }
+		// §5.4, Request constructor steps, step 15.1
+		// eslint-disable-next-line no-eq-null, eqeqeq
+		let referrer = init.referrer == null ? input.referrer : init.referrer;
+		if (referrer === '') {
+			// §5.4, Request constructor steps, step 15.2
+			referrer = 'no-referrer';
+		} else if (referrer) {
+			// §5.4, Request constructor steps, step 15.3.1, 15.3.2
+			const parsedReferrer = new URL(referrer);
+			// §5.4, Request constructor steps, step 15.3.3, 15.3.4
+			referrer = /^about:(\/\/)?client$/.test(parsedReferrer) ? 'client' : parsedReferrer;
+		} else {
+			referrer = undefined;
+		}
 
-    this[INTERNALS] = {
-      method,
-      redirect: init.redirect || input.redirect || 'follow',
-      headers,
-      parsedURL,
-      signal,
-      referrer
-    };
+		this[INTERNALS] = {
+			method,
+			redirect: init.redirect || input.redirect || 'follow',
+			headers,
+			parsedURL,
+			signal,
+			referrer
+		};
 
-    // Node-fetch-only options
-    this.follow = init.follow === undefined ? (input.follow === undefined ? 20 : input.follow) : init.follow;
-    this.compress = init.compress === undefined ? (input.compress === undefined ? true : input.compress) : init.compress;
-    this.counter = init.counter || input.counter || 0;
-    this.agent = init.agent || input.agent;
-    this.highWaterMark = init.highWaterMark || input.highWaterMark || 16384;
-    this.insecureHTTPParser = init.insecureHTTPParser || input.insecureHTTPParser || false;
+		// Node-fetch-only options
+		this.follow = init.follow === undefined ? (input.follow === undefined ? 20 : input.follow) : init.follow;
+		this.compress = init.compress === undefined ? (input.compress === undefined ? true : input.compress) : init.compress;
+		this.counter = init.counter || input.counter || 0;
+		this.agent = init.agent || input.agent;
+		this.highWaterMark = init.highWaterMark || input.highWaterMark || 16384;
+		this.insecureHTTPParser = init.insecureHTTPParser || input.insecureHTTPParser || false;
 
-    // §5.4, Request constructor steps, step 16.
-    // Default is empty string per https://fetch.spec.whatwg.org/#concept-request-referrer-policy
-    this.referrerPolicy = init.referrerPolicy || input.referrerPolicy || '';
-  }
+		// §5.4, Request constructor steps, step 16.
+		// Default is empty string per https://fetch.spec.whatwg.org/#concept-request-referrer-policy
+		this.referrerPolicy = init.referrerPolicy || input.referrerPolicy || '';
+	}
 
-  /** @returns {string} */
-  get method() {
-    return this[INTERNALS].method;
-  }
+	/** @returns {string} */
+	get method() {
+		return this[INTERNALS].method;
+	}
 
-  /** @returns {string} */
-  get url() {
-    return (0,node_url__WEBPACK_IMPORTED_MODULE_0__.format)(this[INTERNALS].parsedURL);
-  }
+	/** @returns {string} */
+	get url() {
+		return (0,node_url__WEBPACK_IMPORTED_MODULE_0__.format)(this[INTERNALS].parsedURL);
+	}
 
-  /** @returns {Headers} */
-  get headers() {
-    return this[INTERNALS].headers;
-  }
+	/** @returns {Headers} */
+	get headers() {
+		return this[INTERNALS].headers;
+	}
 
-  get redirect() {
-    return this[INTERNALS].redirect;
-  }
+	get redirect() {
+		return this[INTERNALS].redirect;
+	}
 
-  /** @returns {AbortSignal} */
-  get signal() {
-    return this[INTERNALS].signal;
-  }
+	/** @returns {AbortSignal} */
+	get signal() {
+		return this[INTERNALS].signal;
+	}
 
-  // https://fetch.spec.whatwg.org/#dom-request-referrer
-  get referrer() {
-    if (this[INTERNALS].referrer === 'no-referrer') {
-      return '';
-    }
+	// https://fetch.spec.whatwg.org/#dom-request-referrer
+	get referrer() {
+		if (this[INTERNALS].referrer === 'no-referrer') {
+			return '';
+		}
 
-    if (this[INTERNALS].referrer === 'client') {
-      return 'about:client';
-    }
+		if (this[INTERNALS].referrer === 'client') {
+			return 'about:client';
+		}
 
-    if (this[INTERNALS].referrer) {
-      return this[INTERNALS].referrer.toString();
-    }
+		if (this[INTERNALS].referrer) {
+			return this[INTERNALS].referrer.toString();
+		}
 
-    return undefined;
-  }
+		return undefined;
+	}
 
-  get referrerPolicy() {
-    return this[INTERNALS].referrerPolicy;
-  }
+	get referrerPolicy() {
+		return this[INTERNALS].referrerPolicy;
+	}
 
-  set referrerPolicy(referrerPolicy) {
-    this[INTERNALS].referrerPolicy = (0,_utils_referrer_js__WEBPACK_IMPORTED_MODULE_6__/* .validateReferrerPolicy */ .cc)(referrerPolicy);
-  }
+	set referrerPolicy(referrerPolicy) {
+		this[INTERNALS].referrerPolicy = (0,_utils_referrer_js__WEBPACK_IMPORTED_MODULE_6__/* .validateReferrerPolicy */ .cc)(referrerPolicy);
+	}
 
-  /**
-   * Clone this request
-   *
-   * @return  Request
-   */
-  clone() {
-    return new Request(this);
-  }
+	/**
+	 * Clone this request
+	 *
+	 * @return  Request
+	 */
+	clone() {
+		return new Request(this);
+	}
 
-  get [Symbol.toStringTag]() {
-    return 'Request';
-  }
+	get [Symbol.toStringTag]() {
+		return 'Request';
+	}
 }
 
 Object.defineProperties(Request.prototype, {
-  method: {enumerable: true},
-  url: {enumerable: true},
-  headers: {enumerable: true},
-  redirect: {enumerable: true},
-  clone: {enumerable: true},
-  signal: {enumerable: true},
-  referrer: {enumerable: true},
-  referrerPolicy: {enumerable: true}
+	method: {enumerable: true},
+	url: {enumerable: true},
+	headers: {enumerable: true},
+	redirect: {enumerable: true},
+	clone: {enumerable: true},
+	signal: {enumerable: true},
+	referrer: {enumerable: true},
+	referrerPolicy: {enumerable: true}
 });
 
 /**
@@ -32689,92 +32689,92 @@ Object.defineProperties(Request.prototype, {
  * @return The options object to be passed to http.request
  */
 const getNodeRequestOptions = request => {
-  const {parsedURL} = request[INTERNALS];
-  const headers = new _headers_js__WEBPACK_IMPORTED_MODULE_2__/* ["default"] */ .A(request[INTERNALS].headers);
+	const {parsedURL} = request[INTERNALS];
+	const headers = new _headers_js__WEBPACK_IMPORTED_MODULE_2__/* ["default"] */ .A(request[INTERNALS].headers);
 
-  // Fetch step 1.3
-  if (!headers.has('Accept')) {
-    headers.set('Accept', '*/*');
-  }
+	// Fetch step 1.3
+	if (!headers.has('Accept')) {
+		headers.set('Accept', '*/*');
+	}
 
-  // HTTP-network-or-cache fetch steps 2.4-2.7
-  let contentLengthValue = null;
-  if (request.body === null && /^(post|put)$/i.test(request.method)) {
-    contentLengthValue = '0';
-  }
+	// HTTP-network-or-cache fetch steps 2.4-2.7
+	let contentLengthValue = null;
+	if (request.body === null && /^(post|put)$/i.test(request.method)) {
+		contentLengthValue = '0';
+	}
 
-  if (request.body !== null) {
-    const totalBytes = (0,_body_js__WEBPACK_IMPORTED_MODULE_3__/* .getTotalBytes */ .Or)(request);
-    // Set Content-Length if totalBytes is a number (that is not NaN)
-    if (typeof totalBytes === 'number' && !Number.isNaN(totalBytes)) {
-      contentLengthValue = String(totalBytes);
-    }
-  }
+	if (request.body !== null) {
+		const totalBytes = (0,_body_js__WEBPACK_IMPORTED_MODULE_3__/* .getTotalBytes */ .Or)(request);
+		// Set Content-Length if totalBytes is a number (that is not NaN)
+		if (typeof totalBytes === 'number' && !Number.isNaN(totalBytes)) {
+			contentLengthValue = String(totalBytes);
+		}
+	}
 
-  if (contentLengthValue) {
-    headers.set('Content-Length', contentLengthValue);
-  }
+	if (contentLengthValue) {
+		headers.set('Content-Length', contentLengthValue);
+	}
 
-  // 4.1. Main fetch, step 2.6
-  // > If request's referrer policy is the empty string, then set request's referrer policy to the
-  // > default referrer policy.
-  if (request.referrerPolicy === '') {
-    request.referrerPolicy = _utils_referrer_js__WEBPACK_IMPORTED_MODULE_6__/* .DEFAULT_REFERRER_POLICY */ .L8;
-  }
+	// 4.1. Main fetch, step 2.6
+	// > If request's referrer policy is the empty string, then set request's referrer policy to the
+	// > default referrer policy.
+	if (request.referrerPolicy === '') {
+		request.referrerPolicy = _utils_referrer_js__WEBPACK_IMPORTED_MODULE_6__/* .DEFAULT_REFERRER_POLICY */ .L8;
+	}
 
-  // 4.1. Main fetch, step 2.7
-  // > If request's referrer is not "no-referrer", set request's referrer to the result of invoking
-  // > determine request's referrer.
-  if (request.referrer && request.referrer !== 'no-referrer') {
-    request[INTERNALS].referrer = (0,_utils_referrer_js__WEBPACK_IMPORTED_MODULE_6__/* .determineRequestsReferrer */ .Ft)(request);
-  } else {
-    request[INTERNALS].referrer = 'no-referrer';
-  }
+	// 4.1. Main fetch, step 2.7
+	// > If request's referrer is not "no-referrer", set request's referrer to the result of invoking
+	// > determine request's referrer.
+	if (request.referrer && request.referrer !== 'no-referrer') {
+		request[INTERNALS].referrer = (0,_utils_referrer_js__WEBPACK_IMPORTED_MODULE_6__/* .determineRequestsReferrer */ .Ft)(request);
+	} else {
+		request[INTERNALS].referrer = 'no-referrer';
+	}
 
-  // 4.5. HTTP-network-or-cache fetch, step 6.9
-  // > If httpRequest's referrer is a URL, then append `Referer`/httpRequest's referrer, serialized
-  // >  and isomorphic encoded, to httpRequest's header list.
-  if (request[INTERNALS].referrer instanceof URL) {
-    headers.set('Referer', request.referrer);
-  }
+	// 4.5. HTTP-network-or-cache fetch, step 6.9
+	// > If httpRequest's referrer is a URL, then append `Referer`/httpRequest's referrer, serialized
+	// >  and isomorphic encoded, to httpRequest's header list.
+	if (request[INTERNALS].referrer instanceof URL) {
+		headers.set('Referer', request.referrer);
+	}
 
-  // HTTP-network-or-cache fetch step 2.11
-  if (!headers.has('User-Agent')) {
-    headers.set('User-Agent', 'node-fetch');
-  }
+	// HTTP-network-or-cache fetch step 2.11
+	if (!headers.has('User-Agent')) {
+		headers.set('User-Agent', 'node-fetch');
+	}
 
-  // HTTP-network-or-cache fetch step 2.15
-  if (request.compress && !headers.has('Accept-Encoding')) {
-    headers.set('Accept-Encoding', 'gzip, deflate, br');
-  }
+	// HTTP-network-or-cache fetch step 2.15
+	if (request.compress && !headers.has('Accept-Encoding')) {
+		headers.set('Accept-Encoding', 'gzip, deflate, br');
+	}
 
-  let {agent} = request;
-  if (typeof agent === 'function') {
-    agent = agent(parsedURL);
-  }
+	let {agent} = request;
+	if (typeof agent === 'function') {
+		agent = agent(parsedURL);
+	}
 
-  // HTTP-network fetch step 4.2
-  // chunked encoding is handled by Node.js
+	// HTTP-network fetch step 4.2
+	// chunked encoding is handled by Node.js
 
-  const search = (0,_utils_get_search_js__WEBPACK_IMPORTED_MODULE_5__/* .getSearch */ .T)(parsedURL);
+	const search = (0,_utils_get_search_js__WEBPACK_IMPORTED_MODULE_5__/* .getSearch */ .T)(parsedURL);
 
-  // Pass the full URL directly to request(), but overwrite the following
-  // options:
-  const options = {
-    // Overwrite search to retain trailing ? (issue #776)
-    path: parsedURL.pathname + search,
-    // The following options are not expressed in the URL
-    method: request.method,
-    headers: headers[Symbol.for('nodejs.util.inspect.custom')](),
-    insecureHTTPParser: request.insecureHTTPParser,
-    agent
-  };
+	// Pass the full URL directly to request(), but overwrite the following
+	// options:
+	const options = {
+		// Overwrite search to retain trailing ? (issue #776)
+		path: parsedURL.pathname + search,
+		// The following options are not expressed in the URL
+		method: request.method,
+		headers: headers[Symbol.for('nodejs.util.inspect.custom')](),
+		insecureHTTPParser: request.insecureHTTPParser,
+		agent
+	};
 
-  return {
-    /** @type {URL} */
-    parsedURL,
-    options
-  };
+	return {
+		/** @type {URL} */
+		parsedURL,
+		options
+	};
 };
 
 
@@ -32812,143 +32812,143 @@ const INTERNALS = Symbol('Response internals');
  * @return  Void
  */
 class Response extends _body_js__WEBPACK_IMPORTED_MODULE_1__/* ["default"] */ .Ay {
-  constructor(body = null, options = {}) {
-    super(body, options);
+	constructor(body = null, options = {}) {
+		super(body, options);
 
-    // eslint-disable-next-line no-eq-null, eqeqeq, no-negated-condition
-    const status = options.status != null ? options.status : 200;
+		// eslint-disable-next-line no-eq-null, eqeqeq, no-negated-condition
+		const status = options.status != null ? options.status : 200;
 
-    const headers = new _headers_js__WEBPACK_IMPORTED_MODULE_0__/* ["default"] */ .A(options.headers);
+		const headers = new _headers_js__WEBPACK_IMPORTED_MODULE_0__/* ["default"] */ .A(options.headers);
 
-    if (body !== null && !headers.has('Content-Type')) {
-      const contentType = (0,_body_js__WEBPACK_IMPORTED_MODULE_1__/* .extractContentType */ .jY)(body, this);
-      if (contentType) {
-        headers.append('Content-Type', contentType);
-      }
-    }
+		if (body !== null && !headers.has('Content-Type')) {
+			const contentType = (0,_body_js__WEBPACK_IMPORTED_MODULE_1__/* .extractContentType */ .jY)(body, this);
+			if (contentType) {
+				headers.append('Content-Type', contentType);
+			}
+		}
 
-    this[INTERNALS] = {
-      type: 'default',
-      url: options.url,
-      status,
-      statusText: options.statusText || '',
-      headers,
-      counter: options.counter,
-      highWaterMark: options.highWaterMark
-    };
-  }
+		this[INTERNALS] = {
+			type: 'default',
+			url: options.url,
+			status,
+			statusText: options.statusText || '',
+			headers,
+			counter: options.counter,
+			highWaterMark: options.highWaterMark
+		};
+	}
 
-  get type() {
-    return this[INTERNALS].type;
-  }
+	get type() {
+		return this[INTERNALS].type;
+	}
 
-  get url() {
-    return this[INTERNALS].url || '';
-  }
+	get url() {
+		return this[INTERNALS].url || '';
+	}
 
-  get status() {
-    return this[INTERNALS].status;
-  }
+	get status() {
+		return this[INTERNALS].status;
+	}
 
-  /**
-   * Convenience property representing if the request ended normally
-   */
-  get ok() {
-    return this[INTERNALS].status >= 200 && this[INTERNALS].status < 300;
-  }
+	/**
+	 * Convenience property representing if the request ended normally
+	 */
+	get ok() {
+		return this[INTERNALS].status >= 200 && this[INTERNALS].status < 300;
+	}
 
-  get redirected() {
-    return this[INTERNALS].counter > 0;
-  }
+	get redirected() {
+		return this[INTERNALS].counter > 0;
+	}
 
-  get statusText() {
-    return this[INTERNALS].statusText;
-  }
+	get statusText() {
+		return this[INTERNALS].statusText;
+	}
 
-  get headers() {
-    return this[INTERNALS].headers;
-  }
+	get headers() {
+		return this[INTERNALS].headers;
+	}
 
-  get highWaterMark() {
-    return this[INTERNALS].highWaterMark;
-  }
+	get highWaterMark() {
+		return this[INTERNALS].highWaterMark;
+	}
 
-  /**
-   * Clone this response
-   *
-   * @return  Response
-   */
-  clone() {
-    return new Response((0,_body_js__WEBPACK_IMPORTED_MODULE_1__/* .clone */ .o8)(this, this.highWaterMark), {
-      type: this.type,
-      url: this.url,
-      status: this.status,
-      statusText: this.statusText,
-      headers: this.headers,
-      ok: this.ok,
-      redirected: this.redirected,
-      size: this.size,
-      highWaterMark: this.highWaterMark
-    });
-  }
+	/**
+	 * Clone this response
+	 *
+	 * @return  Response
+	 */
+	clone() {
+		return new Response((0,_body_js__WEBPACK_IMPORTED_MODULE_1__/* .clone */ .o8)(this, this.highWaterMark), {
+			type: this.type,
+			url: this.url,
+			status: this.status,
+			statusText: this.statusText,
+			headers: this.headers,
+			ok: this.ok,
+			redirected: this.redirected,
+			size: this.size,
+			highWaterMark: this.highWaterMark
+		});
+	}
 
-  /**
-   * @param {string} url    The URL that the new response is to originate from.
-   * @param {number} status An optional status code for the response (e.g., 302.)
-   * @returns {Response}    A Response object.
-   */
-  static redirect(url, status = 302) {
-    if (!(0,_utils_is_redirect_js__WEBPACK_IMPORTED_MODULE_2__/* .isRedirect */ .N)(status)) {
-      throw new RangeError('Failed to execute "redirect" on "response": Invalid status code');
-    }
+	/**
+	 * @param {string} url    The URL that the new response is to originate from.
+	 * @param {number} status An optional status code for the response (e.g., 302.)
+	 * @returns {Response}    A Response object.
+	 */
+	static redirect(url, status = 302) {
+		if (!(0,_utils_is_redirect_js__WEBPACK_IMPORTED_MODULE_2__/* .isRedirect */ .N)(status)) {
+			throw new RangeError('Failed to execute "redirect" on "response": Invalid status code');
+		}
 
-    return new Response(null, {
-      headers: {
-        location: new URL(url).toString()
-      },
-      status
-    });
-  }
+		return new Response(null, {
+			headers: {
+				location: new URL(url).toString()
+			},
+			status
+		});
+	}
 
-  static error() {
-    const response = new Response(null, {status: 0, statusText: ''});
-    response[INTERNALS].type = 'error';
-    return response;
-  }
+	static error() {
+		const response = new Response(null, {status: 0, statusText: ''});
+		response[INTERNALS].type = 'error';
+		return response;
+	}
 
-  static json(data = undefined, init = {}) {
-    const body = JSON.stringify(data);
+	static json(data = undefined, init = {}) {
+		const body = JSON.stringify(data);
 
-    if (body === undefined) {
-      throw new TypeError('data is not JSON serializable');
-    }
+		if (body === undefined) {
+			throw new TypeError('data is not JSON serializable');
+		}
 
-    const headers = new _headers_js__WEBPACK_IMPORTED_MODULE_0__/* ["default"] */ .A(init && init.headers);
+		const headers = new _headers_js__WEBPACK_IMPORTED_MODULE_0__/* ["default"] */ .A(init && init.headers);
 
-    if (!headers.has('content-type')) {
-      headers.set('content-type', 'application/json');
-    }
+		if (!headers.has('content-type')) {
+			headers.set('content-type', 'application/json');
+		}
 
-    return new Response(body, {
-      ...init,
-      headers
-    });
-  }
+		return new Response(body, {
+			...init,
+			headers
+		});
+	}
 
-  get [Symbol.toStringTag]() {
-    return 'Response';
-  }
+	get [Symbol.toStringTag]() {
+		return 'Response';
+	}
 }
 
 Object.defineProperties(Response.prototype, {
-  type: {enumerable: true},
-  url: {enumerable: true},
-  status: {enumerable: true},
-  ok: {enumerable: true},
-  redirected: {enumerable: true},
-  statusText: {enumerable: true},
-  headers: {enumerable: true},
-  clone: {enumerable: true}
+	type: {enumerable: true},
+	url: {enumerable: true},
+	status: {enumerable: true},
+	ok: {enumerable: true},
+	redirected: {enumerable: true},
+	statusText: {enumerable: true},
+	headers: {enumerable: true},
+	clone: {enumerable: true}
 });
 
 
@@ -32962,13 +32962,13 @@ Object.defineProperties(Response.prototype, {
 /* harmony export */   T: () => (/* binding */ getSearch)
 /* harmony export */ });
 const getSearch = parsedURL => {
-  if (parsedURL.search) {
-    return parsedURL.search;
-  }
+	if (parsedURL.search) {
+		return parsedURL.search;
+	}
 
-  const lastOffset = parsedURL.href.length - 1;
-  const hash = parsedURL.hash || (parsedURL.href[lastOffset] === '#' ? '#' : '');
-  return parsedURL.href[lastOffset - hash.length] === '?' ? '?' : '';
+	const lastOffset = parsedURL.href.length - 1;
+	const hash = parsedURL.hash || (parsedURL.href[lastOffset] === '#' ? '#' : '');
+	return parsedURL.href[lastOffset - hash.length] === '?' ? '?' : '';
 };
 
 
@@ -32990,7 +32990,7 @@ const redirectStatus = new Set([301, 302, 303, 307, 308]);
  * @return {boolean}
  */
 const isRedirect = code => {
-  return redirectStatus.has(code);
+	return redirectStatus.has(code);
 };
 
 
@@ -33022,17 +33022,17 @@ const NAME = Symbol.toStringTag;
  * @return {boolean}
  */
 const isURLSearchParameters = object => {
-  return (
-    typeof object === 'object' &&
-    typeof object.append === 'function' &&
-    typeof object.delete === 'function' &&
-    typeof object.get === 'function' &&
-    typeof object.getAll === 'function' &&
-    typeof object.has === 'function' &&
-    typeof object.set === 'function' &&
-    typeof object.sort === 'function' &&
-    object[NAME] === 'URLSearchParams'
-  );
+	return (
+		typeof object === 'object' &&
+		typeof object.append === 'function' &&
+		typeof object.delete === 'function' &&
+		typeof object.get === 'function' &&
+		typeof object.getAll === 'function' &&
+		typeof object.has === 'function' &&
+		typeof object.set === 'function' &&
+		typeof object.sort === 'function' &&
+		object[NAME] === 'URLSearchParams'
+	);
 };
 
 /**
@@ -33041,15 +33041,15 @@ const isURLSearchParameters = object => {
  * @return {boolean}
  */
 const isBlob = object => {
-  return (
-    object &&
-    typeof object === 'object' &&
-    typeof object.arrayBuffer === 'function' &&
-    typeof object.type === 'string' &&
-    typeof object.stream === 'function' &&
-    typeof object.constructor === 'function' &&
-    /^(Blob|File)$/.test(object[NAME])
-  );
+	return (
+		object &&
+		typeof object === 'object' &&
+		typeof object.arrayBuffer === 'function' &&
+		typeof object.type === 'string' &&
+		typeof object.stream === 'function' &&
+		typeof object.constructor === 'function' &&
+		/^(Blob|File)$/.test(object[NAME])
+	);
 };
 
 /**
@@ -33058,12 +33058,12 @@ const isBlob = object => {
  * @return {boolean}
  */
 const isAbortSignal = object => {
-  return (
-    typeof object === 'object' && (
-      object[NAME] === 'AbortSignal' ||
-      object[NAME] === 'EventTarget'
-    )
-  );
+	return (
+		typeof object === 'object' && (
+			object[NAME] === 'AbortSignal' ||
+			object[NAME] === 'EventTarget'
+		)
+	);
 };
 
 /**
@@ -33075,10 +33075,10 @@ const isAbortSignal = object => {
  * @param {string|URL} destination
  */
 const isDomainOrSubdomain = (destination, original) => {
-  const orig = new URL(original).hostname;
-  const dest = new URL(destination).hostname;
+	const orig = new URL(original).hostname;
+	const dest = new URL(destination).hostname;
 
-  return orig === dest || orig.endsWith(`.${dest}`);
+	return orig === dest || orig.endsWith(`.${dest}`);
 };
 
 /**
@@ -33089,10 +33089,10 @@ const isDomainOrSubdomain = (destination, original) => {
  * @param {string|URL} destination
  */
 const isSameProtocol = (destination, original) => {
-  const orig = new URL(original).protocol;
-  const dest = new URL(destination).protocol;
+	const orig = new URL(original).protocol;
+	const dest = new URL(destination).protocol;
 
-  return orig === dest;
+	return orig === dest;
 };
 
 
@@ -33112,22 +33112,22 @@ const isSameProtocol = (destination, original) => {
 
 let s = 0;
 const S = {
-  START_BOUNDARY: s++,
-  HEADER_FIELD_START: s++,
-  HEADER_FIELD: s++,
-  HEADER_VALUE_START: s++,
-  HEADER_VALUE: s++,
-  HEADER_VALUE_ALMOST_DONE: s++,
-  HEADERS_ALMOST_DONE: s++,
-  PART_DATA_START: s++,
-  PART_DATA: s++,
-  END: s++
+	START_BOUNDARY: s++,
+	HEADER_FIELD_START: s++,
+	HEADER_FIELD: s++,
+	HEADER_VALUE_START: s++,
+	HEADER_VALUE: s++,
+	HEADER_VALUE_ALMOST_DONE: s++,
+	HEADERS_ALMOST_DONE: s++,
+	PART_DATA_START: s++,
+	PART_DATA: s++,
+	END: s++
 };
 
 let f = 1;
 const F = {
-  PART_BOUNDARY: f,
-  LAST_BOUNDARY: f *= 2
+	PART_BOUNDARY: f,
+	LAST_BOUNDARY: f *= 2
 };
 
 const LF = 10;
@@ -33143,401 +33143,401 @@ const lower = c => c | 0x20;
 const noop = () => {};
 
 class MultipartParser {
-  /**
-   * @param {string} boundary
-   */
-  constructor(boundary) {
-    this.index = 0;
-    this.flags = 0;
+	/**
+	 * @param {string} boundary
+	 */
+	constructor(boundary) {
+		this.index = 0;
+		this.flags = 0;
 
-    this.onHeaderEnd = noop;
-    this.onHeaderField = noop;
-    this.onHeadersEnd = noop;
-    this.onHeaderValue = noop;
-    this.onPartBegin = noop;
-    this.onPartData = noop;
-    this.onPartEnd = noop;
+		this.onHeaderEnd = noop;
+		this.onHeaderField = noop;
+		this.onHeadersEnd = noop;
+		this.onHeaderValue = noop;
+		this.onPartBegin = noop;
+		this.onPartData = noop;
+		this.onPartEnd = noop;
 
-    this.boundaryChars = {};
+		this.boundaryChars = {};
 
-    boundary = '\r\n--' + boundary;
-    const ui8a = new Uint8Array(boundary.length);
-    for (let i = 0; i < boundary.length; i++) {
-      ui8a[i] = boundary.charCodeAt(i);
-      this.boundaryChars[ui8a[i]] = true;
-    }
+		boundary = '\r\n--' + boundary;
+		const ui8a = new Uint8Array(boundary.length);
+		for (let i = 0; i < boundary.length; i++) {
+			ui8a[i] = boundary.charCodeAt(i);
+			this.boundaryChars[ui8a[i]] = true;
+		}
 
-    this.boundary = ui8a;
-    this.lookbehind = new Uint8Array(this.boundary.length + 8);
-    this.state = S.START_BOUNDARY;
-  }
+		this.boundary = ui8a;
+		this.lookbehind = new Uint8Array(this.boundary.length + 8);
+		this.state = S.START_BOUNDARY;
+	}
 
-  /**
-   * @param {Uint8Array} data
-   */
-  write(data) {
-    let i = 0;
-    const length_ = data.length;
-    let previousIndex = this.index;
-    let {lookbehind, boundary, boundaryChars, index, state, flags} = this;
-    const boundaryLength = this.boundary.length;
-    const boundaryEnd = boundaryLength - 1;
-    const bufferLength = data.length;
-    let c;
-    let cl;
+	/**
+	 * @param {Uint8Array} data
+	 */
+	write(data) {
+		let i = 0;
+		const length_ = data.length;
+		let previousIndex = this.index;
+		let {lookbehind, boundary, boundaryChars, index, state, flags} = this;
+		const boundaryLength = this.boundary.length;
+		const boundaryEnd = boundaryLength - 1;
+		const bufferLength = data.length;
+		let c;
+		let cl;
 
-    const mark = name => {
-      this[name + 'Mark'] = i;
-    };
+		const mark = name => {
+			this[name + 'Mark'] = i;
+		};
 
-    const clear = name => {
-      delete this[name + 'Mark'];
-    };
+		const clear = name => {
+			delete this[name + 'Mark'];
+		};
 
-    const callback = (callbackSymbol, start, end, ui8a) => {
-      if (start === undefined || start !== end) {
-        this[callbackSymbol](ui8a && ui8a.subarray(start, end));
-      }
-    };
+		const callback = (callbackSymbol, start, end, ui8a) => {
+			if (start === undefined || start !== end) {
+				this[callbackSymbol](ui8a && ui8a.subarray(start, end));
+			}
+		};
 
-    const dataCallback = (name, clear) => {
-      const markSymbol = name + 'Mark';
-      if (!(markSymbol in this)) {
-        return;
-      }
+		const dataCallback = (name, clear) => {
+			const markSymbol = name + 'Mark';
+			if (!(markSymbol in this)) {
+				return;
+			}
 
-      if (clear) {
-        callback(name, this[markSymbol], i, data);
-        delete this[markSymbol];
-      } else {
-        callback(name, this[markSymbol], data.length, data);
-        this[markSymbol] = 0;
-      }
-    };
+			if (clear) {
+				callback(name, this[markSymbol], i, data);
+				delete this[markSymbol];
+			} else {
+				callback(name, this[markSymbol], data.length, data);
+				this[markSymbol] = 0;
+			}
+		};
 
-    for (i = 0; i < length_; i++) {
-      c = data[i];
+		for (i = 0; i < length_; i++) {
+			c = data[i];
 
-      switch (state) {
-        case S.START_BOUNDARY:
-          if (index === boundary.length - 2) {
-            if (c === HYPHEN) {
-              flags |= F.LAST_BOUNDARY;
-            } else if (c !== CR) {
-              return;
-            }
+			switch (state) {
+				case S.START_BOUNDARY:
+					if (index === boundary.length - 2) {
+						if (c === HYPHEN) {
+							flags |= F.LAST_BOUNDARY;
+						} else if (c !== CR) {
+							return;
+						}
 
-            index++;
-            break;
-          } else if (index - 1 === boundary.length - 2) {
-            if (flags & F.LAST_BOUNDARY && c === HYPHEN) {
-              state = S.END;
-              flags = 0;
-            } else if (!(flags & F.LAST_BOUNDARY) && c === LF) {
-              index = 0;
-              callback('onPartBegin');
-              state = S.HEADER_FIELD_START;
-            } else {
-              return;
-            }
+						index++;
+						break;
+					} else if (index - 1 === boundary.length - 2) {
+						if (flags & F.LAST_BOUNDARY && c === HYPHEN) {
+							state = S.END;
+							flags = 0;
+						} else if (!(flags & F.LAST_BOUNDARY) && c === LF) {
+							index = 0;
+							callback('onPartBegin');
+							state = S.HEADER_FIELD_START;
+						} else {
+							return;
+						}
 
-            break;
-          }
+						break;
+					}
 
-          if (c !== boundary[index + 2]) {
-            index = -2;
-          }
+					if (c !== boundary[index + 2]) {
+						index = -2;
+					}
 
-          if (c === boundary[index + 2]) {
-            index++;
-          }
+					if (c === boundary[index + 2]) {
+						index++;
+					}
 
-          break;
-        case S.HEADER_FIELD_START:
-          state = S.HEADER_FIELD;
-          mark('onHeaderField');
-          index = 0;
-          // falls through
-        case S.HEADER_FIELD:
-          if (c === CR) {
-            clear('onHeaderField');
-            state = S.HEADERS_ALMOST_DONE;
-            break;
-          }
+					break;
+				case S.HEADER_FIELD_START:
+					state = S.HEADER_FIELD;
+					mark('onHeaderField');
+					index = 0;
+					// falls through
+				case S.HEADER_FIELD:
+					if (c === CR) {
+						clear('onHeaderField');
+						state = S.HEADERS_ALMOST_DONE;
+						break;
+					}
 
-          index++;
-          if (c === HYPHEN) {
-            break;
-          }
+					index++;
+					if (c === HYPHEN) {
+						break;
+					}
 
-          if (c === COLON) {
-            if (index === 1) {
-              // empty header field
-              return;
-            }
+					if (c === COLON) {
+						if (index === 1) {
+							// empty header field
+							return;
+						}
 
-            dataCallback('onHeaderField', true);
-            state = S.HEADER_VALUE_START;
-            break;
-          }
+						dataCallback('onHeaderField', true);
+						state = S.HEADER_VALUE_START;
+						break;
+					}
 
-          cl = lower(c);
-          if (cl < A || cl > Z) {
-            return;
-          }
+					cl = lower(c);
+					if (cl < A || cl > Z) {
+						return;
+					}
 
-          break;
-        case S.HEADER_VALUE_START:
-          if (c === SPACE) {
-            break;
-          }
+					break;
+				case S.HEADER_VALUE_START:
+					if (c === SPACE) {
+						break;
+					}
 
-          mark('onHeaderValue');
-          state = S.HEADER_VALUE;
-          // falls through
-        case S.HEADER_VALUE:
-          if (c === CR) {
-            dataCallback('onHeaderValue', true);
-            callback('onHeaderEnd');
-            state = S.HEADER_VALUE_ALMOST_DONE;
-          }
+					mark('onHeaderValue');
+					state = S.HEADER_VALUE;
+					// falls through
+				case S.HEADER_VALUE:
+					if (c === CR) {
+						dataCallback('onHeaderValue', true);
+						callback('onHeaderEnd');
+						state = S.HEADER_VALUE_ALMOST_DONE;
+					}
 
-          break;
-        case S.HEADER_VALUE_ALMOST_DONE:
-          if (c !== LF) {
-            return;
-          }
+					break;
+				case S.HEADER_VALUE_ALMOST_DONE:
+					if (c !== LF) {
+						return;
+					}
 
-          state = S.HEADER_FIELD_START;
-          break;
-        case S.HEADERS_ALMOST_DONE:
-          if (c !== LF) {
-            return;
-          }
+					state = S.HEADER_FIELD_START;
+					break;
+				case S.HEADERS_ALMOST_DONE:
+					if (c !== LF) {
+						return;
+					}
 
-          callback('onHeadersEnd');
-          state = S.PART_DATA_START;
-          break;
-        case S.PART_DATA_START:
-          state = S.PART_DATA;
-          mark('onPartData');
-          // falls through
-        case S.PART_DATA:
-          previousIndex = index;
+					callback('onHeadersEnd');
+					state = S.PART_DATA_START;
+					break;
+				case S.PART_DATA_START:
+					state = S.PART_DATA;
+					mark('onPartData');
+					// falls through
+				case S.PART_DATA:
+					previousIndex = index;
 
-          if (index === 0) {
-            // boyer-moore derrived algorithm to safely skip non-boundary data
-            i += boundaryEnd;
-            while (i < bufferLength && !(data[i] in boundaryChars)) {
-              i += boundaryLength;
-            }
+					if (index === 0) {
+						// boyer-moore derrived algorithm to safely skip non-boundary data
+						i += boundaryEnd;
+						while (i < bufferLength && !(data[i] in boundaryChars)) {
+							i += boundaryLength;
+						}
 
-            i -= boundaryEnd;
-            c = data[i];
-          }
+						i -= boundaryEnd;
+						c = data[i];
+					}
 
-          if (index < boundary.length) {
-            if (boundary[index] === c) {
-              if (index === 0) {
-                dataCallback('onPartData', true);
-              }
+					if (index < boundary.length) {
+						if (boundary[index] === c) {
+							if (index === 0) {
+								dataCallback('onPartData', true);
+							}
 
-              index++;
-            } else {
-              index = 0;
-            }
-          } else if (index === boundary.length) {
-            index++;
-            if (c === CR) {
-              // CR = part boundary
-              flags |= F.PART_BOUNDARY;
-            } else if (c === HYPHEN) {
-              // HYPHEN = end boundary
-              flags |= F.LAST_BOUNDARY;
-            } else {
-              index = 0;
-            }
-          } else if (index - 1 === boundary.length) {
-            if (flags & F.PART_BOUNDARY) {
-              index = 0;
-              if (c === LF) {
-                // unset the PART_BOUNDARY flag
-                flags &= ~F.PART_BOUNDARY;
-                callback('onPartEnd');
-                callback('onPartBegin');
-                state = S.HEADER_FIELD_START;
-                break;
-              }
-            } else if (flags & F.LAST_BOUNDARY) {
-              if (c === HYPHEN) {
-                callback('onPartEnd');
-                state = S.END;
-                flags = 0;
-              } else {
-                index = 0;
-              }
-            } else {
-              index = 0;
-            }
-          }
+							index++;
+						} else {
+							index = 0;
+						}
+					} else if (index === boundary.length) {
+						index++;
+						if (c === CR) {
+							// CR = part boundary
+							flags |= F.PART_BOUNDARY;
+						} else if (c === HYPHEN) {
+							// HYPHEN = end boundary
+							flags |= F.LAST_BOUNDARY;
+						} else {
+							index = 0;
+						}
+					} else if (index - 1 === boundary.length) {
+						if (flags & F.PART_BOUNDARY) {
+							index = 0;
+							if (c === LF) {
+								// unset the PART_BOUNDARY flag
+								flags &= ~F.PART_BOUNDARY;
+								callback('onPartEnd');
+								callback('onPartBegin');
+								state = S.HEADER_FIELD_START;
+								break;
+							}
+						} else if (flags & F.LAST_BOUNDARY) {
+							if (c === HYPHEN) {
+								callback('onPartEnd');
+								state = S.END;
+								flags = 0;
+							} else {
+								index = 0;
+							}
+						} else {
+							index = 0;
+						}
+					}
 
-          if (index > 0) {
-            // when matching a possible boundary, keep a lookbehind reference
-            // in case it turns out to be a false lead
-            lookbehind[index - 1] = c;
-          } else if (previousIndex > 0) {
-            // if our boundary turned out to be rubbish, the captured lookbehind
-            // belongs to partData
-            const _lookbehind = new Uint8Array(lookbehind.buffer, lookbehind.byteOffset, lookbehind.byteLength);
-            callback('onPartData', 0, previousIndex, _lookbehind);
-            previousIndex = 0;
-            mark('onPartData');
+					if (index > 0) {
+						// when matching a possible boundary, keep a lookbehind reference
+						// in case it turns out to be a false lead
+						lookbehind[index - 1] = c;
+					} else if (previousIndex > 0) {
+						// if our boundary turned out to be rubbish, the captured lookbehind
+						// belongs to partData
+						const _lookbehind = new Uint8Array(lookbehind.buffer, lookbehind.byteOffset, lookbehind.byteLength);
+						callback('onPartData', 0, previousIndex, _lookbehind);
+						previousIndex = 0;
+						mark('onPartData');
 
-            // reconsider the current character even so it interrupted the sequence
-            // it could be the beginning of a new sequence
-            i--;
-          }
+						// reconsider the current character even so it interrupted the sequence
+						// it could be the beginning of a new sequence
+						i--;
+					}
 
-          break;
-        case S.END:
-          break;
-        default:
-          throw new Error(`Unexpected state entered: ${state}`);
-      }
-    }
+					break;
+				case S.END:
+					break;
+				default:
+					throw new Error(`Unexpected state entered: ${state}`);
+			}
+		}
 
-    dataCallback('onHeaderField');
-    dataCallback('onHeaderValue');
-    dataCallback('onPartData');
+		dataCallback('onHeaderField');
+		dataCallback('onHeaderValue');
+		dataCallback('onPartData');
 
-    // Update properties for the next call
-    this.index = index;
-    this.state = state;
-    this.flags = flags;
-  }
+		// Update properties for the next call
+		this.index = index;
+		this.state = state;
+		this.flags = flags;
+	}
 
-  end() {
-    if ((this.state === S.HEADER_FIELD_START && this.index === 0) ||
-      (this.state === S.PART_DATA && this.index === this.boundary.length)) {
-      this.onPartEnd();
-    } else if (this.state !== S.END) {
-      throw new Error('MultipartParser.end(): stream ended unexpectedly');
-    }
-  }
+	end() {
+		if ((this.state === S.HEADER_FIELD_START && this.index === 0) ||
+			(this.state === S.PART_DATA && this.index === this.boundary.length)) {
+			this.onPartEnd();
+		} else if (this.state !== S.END) {
+			throw new Error('MultipartParser.end(): stream ended unexpectedly');
+		}
+	}
 }
 
 function _fileName(headerValue) {
-  // matches either a quoted-string or a token (RFC 2616 section 19.5.1)
-  const m = headerValue.match(/\bfilename=("(.*?)"|([^()<>@,;:\\"/[\]?={}\s\t]+))($|;\s)/i);
-  if (!m) {
-    return;
-  }
+	// matches either a quoted-string or a token (RFC 2616 section 19.5.1)
+	const m = headerValue.match(/\bfilename=("(.*?)"|([^()<>@,;:\\"/[\]?={}\s\t]+))($|;\s)/i);
+	if (!m) {
+		return;
+	}
 
-  const match = m[2] || m[3] || '';
-  let filename = match.slice(match.lastIndexOf('\\') + 1);
-  filename = filename.replace(/%22/g, '"');
-  filename = filename.replace(/&#(\d{4});/g, (m, code) => {
-    return String.fromCharCode(code);
-  });
-  return filename;
+	const match = m[2] || m[3] || '';
+	let filename = match.slice(match.lastIndexOf('\\') + 1);
+	filename = filename.replace(/%22/g, '"');
+	filename = filename.replace(/&#(\d{4});/g, (m, code) => {
+		return String.fromCharCode(code);
+	});
+	return filename;
 }
 
 async function toFormData(Body, ct) {
-  if (!/multipart/i.test(ct)) {
-    throw new TypeError('Failed to fetch');
-  }
+	if (!/multipart/i.test(ct)) {
+		throw new TypeError('Failed to fetch');
+	}
 
-  const m = ct.match(/boundary=(?:"([^"]+)"|([^;]+))/i);
+	const m = ct.match(/boundary=(?:"([^"]+)"|([^;]+))/i);
 
-  if (!m) {
-    throw new TypeError('no or bad content-type header, no multipart boundary');
-  }
+	if (!m) {
+		throw new TypeError('no or bad content-type header, no multipart boundary');
+	}
 
-  const parser = new MultipartParser(m[1] || m[2]);
+	const parser = new MultipartParser(m[1] || m[2]);
 
-  let headerField;
-  let headerValue;
-  let entryValue;
-  let entryName;
-  let contentType;
-  let filename;
-  const entryChunks = [];
-  const formData = new formdata_polyfill_esm_min_js__WEBPACK_IMPORTED_MODULE_1__/* .FormData */ .fS();
+	let headerField;
+	let headerValue;
+	let entryValue;
+	let entryName;
+	let contentType;
+	let filename;
+	const entryChunks = [];
+	const formData = new formdata_polyfill_esm_min_js__WEBPACK_IMPORTED_MODULE_1__/* .FormData */ .fS();
 
-  const onPartData = ui8a => {
-    entryValue += decoder.decode(ui8a, {stream: true});
-  };
+	const onPartData = ui8a => {
+		entryValue += decoder.decode(ui8a, {stream: true});
+	};
 
-  const appendToFile = ui8a => {
-    entryChunks.push(ui8a);
-  };
+	const appendToFile = ui8a => {
+		entryChunks.push(ui8a);
+	};
 
-  const appendFileToFormData = () => {
-    const file = new fetch_blob_from_js__WEBPACK_IMPORTED_MODULE_0__/* .File */ .ZH(entryChunks, filename, {type: contentType});
-    formData.append(entryName, file);
-  };
+	const appendFileToFormData = () => {
+		const file = new fetch_blob_from_js__WEBPACK_IMPORTED_MODULE_0__/* .File */ .ZH(entryChunks, filename, {type: contentType});
+		formData.append(entryName, file);
+	};
 
-  const appendEntryToFormData = () => {
-    formData.append(entryName, entryValue);
-  };
+	const appendEntryToFormData = () => {
+		formData.append(entryName, entryValue);
+	};
 
-  const decoder = new TextDecoder('utf-8');
-  decoder.decode();
+	const decoder = new TextDecoder('utf-8');
+	decoder.decode();
 
-  parser.onPartBegin = function () {
-    parser.onPartData = onPartData;
-    parser.onPartEnd = appendEntryToFormData;
+	parser.onPartBegin = function () {
+		parser.onPartData = onPartData;
+		parser.onPartEnd = appendEntryToFormData;
 
-    headerField = '';
-    headerValue = '';
-    entryValue = '';
-    entryName = '';
-    contentType = '';
-    filename = null;
-    entryChunks.length = 0;
-  };
+		headerField = '';
+		headerValue = '';
+		entryValue = '';
+		entryName = '';
+		contentType = '';
+		filename = null;
+		entryChunks.length = 0;
+	};
 
-  parser.onHeaderField = function (ui8a) {
-    headerField += decoder.decode(ui8a, {stream: true});
-  };
+	parser.onHeaderField = function (ui8a) {
+		headerField += decoder.decode(ui8a, {stream: true});
+	};
 
-  parser.onHeaderValue = function (ui8a) {
-    headerValue += decoder.decode(ui8a, {stream: true});
-  };
+	parser.onHeaderValue = function (ui8a) {
+		headerValue += decoder.decode(ui8a, {stream: true});
+	};
 
-  parser.onHeaderEnd = function () {
-    headerValue += decoder.decode();
-    headerField = headerField.toLowerCase();
+	parser.onHeaderEnd = function () {
+		headerValue += decoder.decode();
+		headerField = headerField.toLowerCase();
 
-    if (headerField === 'content-disposition') {
-      // matches either a quoted-string or a token (RFC 2616 section 19.5.1)
-      const m = headerValue.match(/\bname=("([^"]*)"|([^()<>@,;:\\"/[\]?={}\s\t]+))/i);
+		if (headerField === 'content-disposition') {
+			// matches either a quoted-string or a token (RFC 2616 section 19.5.1)
+			const m = headerValue.match(/\bname=("([^"]*)"|([^()<>@,;:\\"/[\]?={}\s\t]+))/i);
 
-      if (m) {
-        entryName = m[2] || m[3] || '';
-      }
+			if (m) {
+				entryName = m[2] || m[3] || '';
+			}
 
-      filename = _fileName(headerValue);
+			filename = _fileName(headerValue);
 
-      if (filename) {
-        parser.onPartData = appendToFile;
-        parser.onPartEnd = appendFileToFormData;
-      }
-    } else if (headerField === 'content-type') {
-      contentType = headerValue;
-    }
+			if (filename) {
+				parser.onPartData = appendToFile;
+				parser.onPartEnd = appendFileToFormData;
+			}
+		} else if (headerField === 'content-type') {
+			contentType = headerValue;
+		}
 
-    headerValue = '';
-    headerField = '';
-  };
+		headerValue = '';
+		headerField = '';
+	};
 
-  for await (const chunk of Body) {
-    parser.write(chunk);
-  }
+	for await (const chunk of Body) {
+		parser.write(chunk);
+	}
 
-  parser.end();
+	parser.end();
 
-  return formData;
+	return formData;
 }
 
 
@@ -33573,57 +33573,57 @@ async function toFormData(Body, ct) {
  * @param {boolean} [originOnly=false]
  */
 function stripURLForUseAsAReferrer(url, originOnly = false) {
-  // 1. If url is null, return no referrer.
-  if (url == null) { // eslint-disable-line no-eq-null, eqeqeq
-    return 'no-referrer';
-  }
+	// 1. If url is null, return no referrer.
+	if (url == null) { // eslint-disable-line no-eq-null, eqeqeq
+		return 'no-referrer';
+	}
 
-  url = new URL(url);
+	url = new URL(url);
 
-  // 2. If url's scheme is a local scheme, then return no referrer.
-  if (/^(about|blob|data):$/.test(url.protocol)) {
-    return 'no-referrer';
-  }
+	// 2. If url's scheme is a local scheme, then return no referrer.
+	if (/^(about|blob|data):$/.test(url.protocol)) {
+		return 'no-referrer';
+	}
 
-  // 3. Set url's username to the empty string.
-  url.username = '';
+	// 3. Set url's username to the empty string.
+	url.username = '';
 
-  // 4. Set url's password to null.
-  // Note: `null` appears to be a mistake as this actually results in the password being `"null"`.
-  url.password = '';
+	// 4. Set url's password to null.
+	// Note: `null` appears to be a mistake as this actually results in the password being `"null"`.
+	url.password = '';
 
-  // 5. Set url's fragment to null.
-  // Note: `null` appears to be a mistake as this actually results in the fragment being `"#null"`.
-  url.hash = '';
+	// 5. Set url's fragment to null.
+	// Note: `null` appears to be a mistake as this actually results in the fragment being `"#null"`.
+	url.hash = '';
 
-  // 6. If the origin-only flag is true, then:
-  if (originOnly) {
-    // 6.1. Set url's path to null.
-    // Note: `null` appears to be a mistake as this actually results in the path being `"/null"`.
-    url.pathname = '';
+	// 6. If the origin-only flag is true, then:
+	if (originOnly) {
+		// 6.1. Set url's path to null.
+		// Note: `null` appears to be a mistake as this actually results in the path being `"/null"`.
+		url.pathname = '';
 
-    // 6.2. Set url's query to null.
-    // Note: `null` appears to be a mistake as this actually results in the query being `"?null"`.
-    url.search = '';
-  }
+		// 6.2. Set url's query to null.
+		// Note: `null` appears to be a mistake as this actually results in the query being `"?null"`.
+		url.search = '';
+	}
 
-  // 7. Return url.
-  return url;
+	// 7. Return url.
+	return url;
 }
 
 /**
  * @see {@link https://w3c.github.io/webappsec-referrer-policy/#enumdef-referrerpolicy|enum ReferrerPolicy}
  */
 const ReferrerPolicy = new Set([
-  '',
-  'no-referrer',
-  'no-referrer-when-downgrade',
-  'same-origin',
-  'origin',
-  'strict-origin',
-  'origin-when-cross-origin',
-  'strict-origin-when-cross-origin',
-  'unsafe-url'
+	'',
+	'no-referrer',
+	'no-referrer-when-downgrade',
+	'same-origin',
+	'origin',
+	'strict-origin',
+	'origin-when-cross-origin',
+	'strict-origin-when-cross-origin',
+	'unsafe-url'
 ]);
 
 /**
@@ -33637,11 +33637,11 @@ const DEFAULT_REFERRER_POLICY = 'strict-origin-when-cross-origin';
  * @returns {string} referrerPolicy
  */
 function validateReferrerPolicy(referrerPolicy) {
-  if (!ReferrerPolicy.has(referrerPolicy)) {
-    throw new TypeError(`Invalid referrerPolicy: ${referrerPolicy}`);
-  }
+	if (!ReferrerPolicy.has(referrerPolicy)) {
+		throw new TypeError(`Invalid referrerPolicy: ${referrerPolicy}`);
+	}
 
-  return referrerPolicy;
+	return referrerPolicy;
 }
 
 /**
@@ -33650,49 +33650,49 @@ function validateReferrerPolicy(referrerPolicy) {
  * @returns `true`: "Potentially Trustworthy", `false`: "Not Trustworthy"
  */
 function isOriginPotentiallyTrustworthy(url) {
-  // 1. If origin is an opaque origin, return "Not Trustworthy".
-  // Not applicable
+	// 1. If origin is an opaque origin, return "Not Trustworthy".
+	// Not applicable
 
-  // 2. Assert: origin is a tuple origin.
-  // Not for implementations
+	// 2. Assert: origin is a tuple origin.
+	// Not for implementations
 
-  // 3. If origin's scheme is either "https" or "wss", return "Potentially Trustworthy".
-  if (/^(http|ws)s:$/.test(url.protocol)) {
-    return true;
-  }
+	// 3. If origin's scheme is either "https" or "wss", return "Potentially Trustworthy".
+	if (/^(http|ws)s:$/.test(url.protocol)) {
+		return true;
+	}
 
-  // 4. If origin's host component matches one of the CIDR notations 127.0.0.0/8 or ::1/128 [RFC4632], return "Potentially Trustworthy".
-  const hostIp = url.host.replace(/(^\[)|(]$)/g, '');
-  const hostIPVersion = (0,node_net__WEBPACK_IMPORTED_MODULE_0__.isIP)(hostIp);
+	// 4. If origin's host component matches one of the CIDR notations 127.0.0.0/8 or ::1/128 [RFC4632], return "Potentially Trustworthy".
+	const hostIp = url.host.replace(/(^\[)|(]$)/g, '');
+	const hostIPVersion = (0,node_net__WEBPACK_IMPORTED_MODULE_0__.isIP)(hostIp);
 
-  if (hostIPVersion === 4 && /^127\./.test(hostIp)) {
-    return true;
-  }
+	if (hostIPVersion === 4 && /^127\./.test(hostIp)) {
+		return true;
+	}
 
-  if (hostIPVersion === 6 && /^(((0+:){7})|(::(0+:){0,6}))0*1$/.test(hostIp)) {
-    return true;
-  }
+	if (hostIPVersion === 6 && /^(((0+:){7})|(::(0+:){0,6}))0*1$/.test(hostIp)) {
+		return true;
+	}
 
-  // 5. If origin's host component is "localhost" or falls within ".localhost", and the user agent conforms to the name resolution rules in [let-localhost-be-localhost], return "Potentially Trustworthy".
-  // We are returning FALSE here because we cannot ensure conformance to
-  // let-localhost-be-loalhost (https://tools.ietf.org/html/draft-west-let-localhost-be-localhost)
-  if (url.host === 'localhost' || url.host.endsWith('.localhost')) {
-    return false;
-  }
+	// 5. If origin's host component is "localhost" or falls within ".localhost", and the user agent conforms to the name resolution rules in [let-localhost-be-localhost], return "Potentially Trustworthy".
+	// We are returning FALSE here because we cannot ensure conformance to
+	// let-localhost-be-loalhost (https://tools.ietf.org/html/draft-west-let-localhost-be-localhost)
+	if (url.host === 'localhost' || url.host.endsWith('.localhost')) {
+		return false;
+	}
 
-  // 6. If origin's scheme component is file, return "Potentially Trustworthy".
-  if (url.protocol === 'file:') {
-    return true;
-  }
+	// 6. If origin's scheme component is file, return "Potentially Trustworthy".
+	if (url.protocol === 'file:') {
+		return true;
+	}
 
-  // 7. If origin's scheme component is one which the user agent considers to be authenticated, return "Potentially Trustworthy".
-  // Not supported
+	// 7. If origin's scheme component is one which the user agent considers to be authenticated, return "Potentially Trustworthy".
+	// Not supported
 
-  // 8. If origin has been configured as a trustworthy origin, return "Potentially Trustworthy".
-  // Not supported
+	// 8. If origin has been configured as a trustworthy origin, return "Potentially Trustworthy".
+	// Not supported
 
-  // 9. Return "Not Trustworthy".
-  return false;
+	// 9. Return "Not Trustworthy".
+	return false;
 }
 
 /**
@@ -33701,25 +33701,25 @@ function isOriginPotentiallyTrustworthy(url) {
  * @returns `true`: "Potentially Trustworthy", `false`: "Not Trustworthy"
  */
 function isUrlPotentiallyTrustworthy(url) {
-  // 1. If url is "about:blank" or "about:srcdoc", return "Potentially Trustworthy".
-  if (/^about:(blank|srcdoc)$/.test(url)) {
-    return true;
-  }
+	// 1. If url is "about:blank" or "about:srcdoc", return "Potentially Trustworthy".
+	if (/^about:(blank|srcdoc)$/.test(url)) {
+		return true;
+	}
 
-  // 2. If url's scheme is "data", return "Potentially Trustworthy".
-  if (url.protocol === 'data:') {
-    return true;
-  }
+	// 2. If url's scheme is "data", return "Potentially Trustworthy".
+	if (url.protocol === 'data:') {
+		return true;
+	}
 
-  // Note: The origin of blob: and filesystem: URLs is the origin of the context in which they were
-  // created. Therefore, blobs created in a trustworthy origin will themselves be potentially
-  // trustworthy.
-  if (/^(blob|filesystem):$/.test(url.protocol)) {
-    return true;
-  }
+	// Note: The origin of blob: and filesystem: URLs is the origin of the context in which they were
+	// created. Therefore, blobs created in a trustworthy origin will themselves be potentially
+	// trustworthy.
+	if (/^(blob|filesystem):$/.test(url.protocol)) {
+		return true;
+	}
 
-  // 3. Return the result of executing §3.2 Is origin potentially trustworthy? on url's origin.
-  return isOriginPotentiallyTrustworthy(url);
+	// 3. Return the result of executing §3.2 Is origin potentially trustworthy? on url's origin.
+	return isOriginPotentiallyTrustworthy(url);
 }
 
 /**
@@ -33747,126 +33747,126 @@ function isUrlPotentiallyTrustworthy(url) {
  * @returns {external:URL} Request's referrer
  */
 function determineRequestsReferrer(request, {referrerURLCallback, referrerOriginCallback} = {}) {
-  // There are 2 notes in the specification about invalid pre-conditions.  We return null, here, for
-  // these cases:
-  // > Note: If request's referrer is "no-referrer", Fetch will not call into this algorithm.
-  // > Note: If request's referrer policy is the empty string, Fetch will not call into this
-  // > algorithm.
-  if (request.referrer === 'no-referrer' || request.referrerPolicy === '') {
-    return null;
-  }
+	// There are 2 notes in the specification about invalid pre-conditions.  We return null, here, for
+	// these cases:
+	// > Note: If request's referrer is "no-referrer", Fetch will not call into this algorithm.
+	// > Note: If request's referrer policy is the empty string, Fetch will not call into this
+	// > algorithm.
+	if (request.referrer === 'no-referrer' || request.referrerPolicy === '') {
+		return null;
+	}
 
-  // 1. Let policy be request's associated referrer policy.
-  const policy = request.referrerPolicy;
+	// 1. Let policy be request's associated referrer policy.
+	const policy = request.referrerPolicy;
 
-  // 2. Let environment be request's client.
-  // not applicable to node.js
+	// 2. Let environment be request's client.
+	// not applicable to node.js
 
-  // 3. Switch on request's referrer:
-  if (request.referrer === 'about:client') {
-    return 'no-referrer';
-  }
+	// 3. Switch on request's referrer:
+	if (request.referrer === 'about:client') {
+		return 'no-referrer';
+	}
 
-  // "a URL": Let referrerSource be request's referrer.
-  const referrerSource = request.referrer;
+	// "a URL": Let referrerSource be request's referrer.
+	const referrerSource = request.referrer;
 
-  // 4. Let request's referrerURL be the result of stripping referrerSource for use as a referrer.
-  let referrerURL = stripURLForUseAsAReferrer(referrerSource);
+	// 4. Let request's referrerURL be the result of stripping referrerSource for use as a referrer.
+	let referrerURL = stripURLForUseAsAReferrer(referrerSource);
 
-  // 5. Let referrerOrigin be the result of stripping referrerSource for use as a referrer, with the
-  //    origin-only flag set to true.
-  let referrerOrigin = stripURLForUseAsAReferrer(referrerSource, true);
+	// 5. Let referrerOrigin be the result of stripping referrerSource for use as a referrer, with the
+	//    origin-only flag set to true.
+	let referrerOrigin = stripURLForUseAsAReferrer(referrerSource, true);
 
-  // 6. If the result of serializing referrerURL is a string whose length is greater than 4096, set
-  //    referrerURL to referrerOrigin.
-  if (referrerURL.toString().length > 4096) {
-    referrerURL = referrerOrigin;
-  }
+	// 6. If the result of serializing referrerURL is a string whose length is greater than 4096, set
+	//    referrerURL to referrerOrigin.
+	if (referrerURL.toString().length > 4096) {
+		referrerURL = referrerOrigin;
+	}
 
-  // 7. The user agent MAY alter referrerURL or referrerOrigin at this point to enforce arbitrary
-  //    policy considerations in the interests of minimizing data leakage. For example, the user
-  //    agent could strip the URL down to an origin, modify its host, replace it with an empty
-  //    string, etc.
-  if (referrerURLCallback) {
-    referrerURL = referrerURLCallback(referrerURL);
-  }
+	// 7. The user agent MAY alter referrerURL or referrerOrigin at this point to enforce arbitrary
+	//    policy considerations in the interests of minimizing data leakage. For example, the user
+	//    agent could strip the URL down to an origin, modify its host, replace it with an empty
+	//    string, etc.
+	if (referrerURLCallback) {
+		referrerURL = referrerURLCallback(referrerURL);
+	}
 
-  if (referrerOriginCallback) {
-    referrerOrigin = referrerOriginCallback(referrerOrigin);
-  }
+	if (referrerOriginCallback) {
+		referrerOrigin = referrerOriginCallback(referrerOrigin);
+	}
 
-  // 8.Execute the statements corresponding to the value of policy:
-  const currentURL = new URL(request.url);
+	// 8.Execute the statements corresponding to the value of policy:
+	const currentURL = new URL(request.url);
 
-  switch (policy) {
-    case 'no-referrer':
-      return 'no-referrer';
+	switch (policy) {
+		case 'no-referrer':
+			return 'no-referrer';
 
-    case 'origin':
-      return referrerOrigin;
+		case 'origin':
+			return referrerOrigin;
 
-    case 'unsafe-url':
-      return referrerURL;
+		case 'unsafe-url':
+			return referrerURL;
 
-    case 'strict-origin':
-      // 1. If referrerURL is a potentially trustworthy URL and request's current URL is not a
-      //    potentially trustworthy URL, then return no referrer.
-      if (isUrlPotentiallyTrustworthy(referrerURL) && !isUrlPotentiallyTrustworthy(currentURL)) {
-        return 'no-referrer';
-      }
+		case 'strict-origin':
+			// 1. If referrerURL is a potentially trustworthy URL and request's current URL is not a
+			//    potentially trustworthy URL, then return no referrer.
+			if (isUrlPotentiallyTrustworthy(referrerURL) && !isUrlPotentiallyTrustworthy(currentURL)) {
+				return 'no-referrer';
+			}
 
-      // 2. Return referrerOrigin.
-      return referrerOrigin.toString();
+			// 2. Return referrerOrigin.
+			return referrerOrigin.toString();
 
-    case 'strict-origin-when-cross-origin':
-      // 1. If the origin of referrerURL and the origin of request's current URL are the same, then
-      //    return referrerURL.
-      if (referrerURL.origin === currentURL.origin) {
-        return referrerURL;
-      }
+		case 'strict-origin-when-cross-origin':
+			// 1. If the origin of referrerURL and the origin of request's current URL are the same, then
+			//    return referrerURL.
+			if (referrerURL.origin === currentURL.origin) {
+				return referrerURL;
+			}
 
-      // 2. If referrerURL is a potentially trustworthy URL and request's current URL is not a
-      //    potentially trustworthy URL, then return no referrer.
-      if (isUrlPotentiallyTrustworthy(referrerURL) && !isUrlPotentiallyTrustworthy(currentURL)) {
-        return 'no-referrer';
-      }
+			// 2. If referrerURL is a potentially trustworthy URL and request's current URL is not a
+			//    potentially trustworthy URL, then return no referrer.
+			if (isUrlPotentiallyTrustworthy(referrerURL) && !isUrlPotentiallyTrustworthy(currentURL)) {
+				return 'no-referrer';
+			}
 
-      // 3. Return referrerOrigin.
-      return referrerOrigin;
+			// 3. Return referrerOrigin.
+			return referrerOrigin;
 
-    case 'same-origin':
-      // 1. If the origin of referrerURL and the origin of request's current URL are the same, then
-      //    return referrerURL.
-      if (referrerURL.origin === currentURL.origin) {
-        return referrerURL;
-      }
+		case 'same-origin':
+			// 1. If the origin of referrerURL and the origin of request's current URL are the same, then
+			//    return referrerURL.
+			if (referrerURL.origin === currentURL.origin) {
+				return referrerURL;
+			}
 
-      // 2. Return no referrer.
-      return 'no-referrer';
+			// 2. Return no referrer.
+			return 'no-referrer';
 
-    case 'origin-when-cross-origin':
-      // 1. If the origin of referrerURL and the origin of request's current URL are the same, then
-      //    return referrerURL.
-      if (referrerURL.origin === currentURL.origin) {
-        return referrerURL;
-      }
+		case 'origin-when-cross-origin':
+			// 1. If the origin of referrerURL and the origin of request's current URL are the same, then
+			//    return referrerURL.
+			if (referrerURL.origin === currentURL.origin) {
+				return referrerURL;
+			}
 
-      // Return referrerOrigin.
-      return referrerOrigin;
+			// Return referrerOrigin.
+			return referrerOrigin;
 
-    case 'no-referrer-when-downgrade':
-      // 1. If referrerURL is a potentially trustworthy URL and request's current URL is not a
-      //    potentially trustworthy URL, then return no referrer.
-      if (isUrlPotentiallyTrustworthy(referrerURL) && !isUrlPotentiallyTrustworthy(currentURL)) {
-        return 'no-referrer';
-      }
+		case 'no-referrer-when-downgrade':
+			// 1. If referrerURL is a potentially trustworthy URL and request's current URL is not a
+			//    potentially trustworthy URL, then return no referrer.
+			if (isUrlPotentiallyTrustworthy(referrerURL) && !isUrlPotentiallyTrustworthy(currentURL)) {
+				return 'no-referrer';
+			}
 
-      // 2. Return referrerURL.
-      return referrerURL;
+			// 2. Return referrerURL.
+			return referrerURL;
 
-    default:
-      throw new TypeError(`Invalid referrerPolicy: ${policy}`);
-  }
+		default:
+			throw new TypeError(`Invalid referrerPolicy: ${policy}`);
+	}
 }
 
 /**
@@ -33875,25 +33875,25 @@ function determineRequestsReferrer(request, {referrerURLCallback, referrerOrigin
  * @returns {string} policy
  */
 function parseReferrerPolicyFromHeader(headers) {
-  // 1. Let policy-tokens be the result of extracting header list values given `Referrer-Policy`
-  //    and response’s header list.
-  const policyTokens = (headers.get('referrer-policy') || '').split(/[,\s]+/);
+	// 1. Let policy-tokens be the result of extracting header list values given `Referrer-Policy`
+	//    and response’s header list.
+	const policyTokens = (headers.get('referrer-policy') || '').split(/[,\s]+/);
 
-  // 2. Let policy be the empty string.
-  let policy = '';
+	// 2. Let policy be the empty string.
+	let policy = '';
 
-  // 3. For each token in policy-tokens, if token is a referrer policy and token is not the empty
-  //    string, then set policy to token.
-  // Note: This algorithm loops over multiple policy values to allow deployment of new policy
-  // values with fallbacks for older user agents, as described in § 11.1 Unknown Policy Values.
-  for (const token of policyTokens) {
-    if (token && ReferrerPolicy.has(token)) {
-      policy = token;
-    }
-  }
+	// 3. For each token in policy-tokens, if token is a referrer policy and token is not the empty
+	//    string, then set policy to token.
+	// Note: This algorithm loops over multiple policy values to allow deployment of new policy
+	// values with fallbacks for older user agents, as described in § 11.1 Unknown Policy Values.
+	for (const token of policyTokens) {
+		if (token && ReferrerPolicy.has(token)) {
+			policy = token;
+		}
+	}
 
-  // 4. Return policy.
-  return policy;
+	// 4. Return policy.
+	return policy;
 }
 
 
