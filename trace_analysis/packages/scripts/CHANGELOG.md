@@ -1,5 +1,12 @@
 # @lynx-js/trace-analysis-scripts
 
+## 0.0.9
+
+### Patch Changes
+
+- Updated dependencies
+  - @lynx-js/trace-query@0.1.2
+
 ## 0.0.8
 
 ### Patch Changes

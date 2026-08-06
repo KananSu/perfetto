@@ -1,5 +1,11 @@
 # @lynx-js/skill-lynx-trace-analysis
 
+## 0.0.12
+
+### Patch Changes
+
+- Release packages
+
 ## 0.0.11
 
 ### Patch Changes

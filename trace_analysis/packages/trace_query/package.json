@@ -1,6 +1,6 @@
 {
   "name": "@lynx-js/trace-query",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Lynx trace query library and CLI tool",
   "keywords": [
     "lynx",

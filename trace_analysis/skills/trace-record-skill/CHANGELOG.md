@@ -1,5 +1,11 @@
 # @lynx-js/skill-lynx-trace-record
 
+## 0.0.6
+
+### Patch Changes
+
+- Release packages
+
 ## 0.0.5
 
 ### Patch Changes
