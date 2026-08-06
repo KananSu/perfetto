@@ -1,0 +1,33 @@
+{
+  "skill_name": "lynx-trace-analysis",
+  "evals": [
+    {
+      "id": 1,
+      "name": "memory-analysis-html-report",
+      "prompt": "Analyze this Lynx trace for page-memory growth and shared BTS context leaks. Save the required memory analysis HTML report to /tmp/memory-report.html and summarize only rule-defined findings with confidence.",
+      "expected_output": "An HTML report path and an evidence-bound summary of memory findings.",
+      "files": [
+        "memory-growth.pftrace"
+      ],
+      "expectations": [
+        "Loads references/memory-analysis.md before drawing conclusions.",
+        "Uses the memory-analysis trace query workflow rather than generic optimization advice.",
+        "Returns the requested HTML report path and labels uncertainty when evidence is incomplete."
+      ]
+    },
+    {
+      "id": 2,
+      "name": "event-dispatch-evidence-format",
+      "prompt": "A tap in this Lynx trace feels delayed. Diagnose whether dispatch, the business handler, or downstream rendering is responsible, and cite every named trace event with its slice ID.",
+      "expected_output": "A trace-backed event-dispatch diagnosis with stable event references.",
+      "files": [
+        "tap-delay.pftrace"
+      ],
+      "expectations": [
+        "Loads references/event-analysis.md before analysis.",
+        "Distinguishes event delivery delay from handler cost and later rendering work.",
+        "Formats cited events as EventName [slice id: N] instead of using unqualified event names."
+      ]
+    }
+  ]
+}

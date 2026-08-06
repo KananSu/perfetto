@@ -1,0 +1,22 @@
+[
+  {
+    "query": "Analyze this Lynx trace for PSS growth and page lifecycle memory leaks.",
+    "should_trigger": true
+  },
+  {
+    "query": "Why does this Lynx tap event take so long to reach the handler in my trace?",
+    "should_trigger": true
+  },
+  {
+    "query": "Compare these two .pftrace files for a first-render regression.",
+    "should_trigger": true
+  },
+  {
+    "query": "How do I change the text color of a Lynx component?",
+    "should_trigger": false
+  },
+  {
+    "query": "Recommend a database for offline caching in a mobile application.",
+    "should_trigger": false
+  }
+]
