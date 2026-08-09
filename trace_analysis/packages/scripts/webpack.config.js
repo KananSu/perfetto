@@ -8,7 +8,6 @@ module.exports = {
   mode: 'production',
   entry: {
     trace_query: './packages/trace_query/dist/cli/index.js',
-    trace_record: './packages/trace_record/dist/cli/index.js',
   },
   output: {
     path: path.resolve(__dirname, 'dist', 'bundles'),

@@ -3,6 +3,11 @@ name: lynx-trace-record
 description: This guide provides step-by-step instructions for recording Lynx performance traces. Use this guide when the user asks how to record a trace.
 ---
 
+> **Deprecated:** This guide and its generated skill are retained only for
+> historical reference. Trace record is no longer maintained and must not be
+> regenerated or updated. Trace recording has moved to the
+> [`lynx-devtool` trace reference](https://github.com/lynx-community/skills/blob/release/skills/lynx-devtool/references/trace.md).
+
 ## 1. Workflow Example
 
 The recording process requires using the `trace_record` CLI tool. **The order of operations is critical**.

@@ -2,6 +2,12 @@
 
 A comprehensive solution for analyzing Lynx performance traces, including tools for querying trace data, generating AI-powered analysis, and evaluating trace analysis agents.
 
+> **Trace record is deprecated.** `packages/trace_record` and
+> `skills/trace-record-skill` are retained only for historical reference. They
+> are excluded from the pnpm workspace and must not receive updates. The
+> maintained replacement is the
+> [`lynx-devtool` trace reference](https://github.com/lynx-community/skills/blob/release/skills/lynx-devtool/references/trace.md).
+
 ## Project Structure
 
 ```

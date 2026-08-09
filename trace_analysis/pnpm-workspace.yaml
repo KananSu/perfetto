@@ -1,3 +1,5 @@
 packages:
   - 'packages/*'
   - 'skills/*'
+  - '!packages/trace_record'
+  - '!skills/trace-record-skill'
