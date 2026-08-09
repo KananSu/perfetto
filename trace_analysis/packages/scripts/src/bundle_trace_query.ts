@@ -14,14 +14,7 @@ function main() {
       cwd: join(rootDir, 'packages/trace_query'),
     });
 
-    // Build trace_record
-    console.log('Building trace_record...');
-    execSync('pnpm run build', {
-      stdio: 'inherit',
-      cwd: join(rootDir, 'packages/trace_record'),
-    });
-
-    // Execute webpack command to bundle both
+    // Execute webpack command to bundle trace_query
     console.log('Bundling...');
     execSync(`npx webpack --config ${join(__dirname, '../webpack.config.js')}`, {
       stdio: 'inherit',

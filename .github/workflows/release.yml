@@ -1,4 +1,4 @@
-name: Publish Trace Analysis Packages
+name: Publish Trace Analysis Skill
 
 on:
   workflow_dispatch:
@@ -11,17 +11,6 @@ on:
         options:
           - patch
           - alpha
-      packages:
-        description: 'Select packages to release'
-        required: true
-        type: choice
-        options:
-          - all
-          - '@lynx-js/trace-analysis-agent'
-          - '@lynx-js/trace-query'
-          - '@lynx-js/skill-lynx-trace-analysis'
-          - '@lynx-js/skill-lynx-trace-record'
-        default: all
 
 permissions:
   contents: write
@@ -68,26 +57,13 @@ jobs:
 
       - name: Create changeset
         run: |
-          ALL_PACKAGES=(
-            "@lynx-js/trace-analysis-agent"
-            "@lynx-js/trace-query"
-            "@lynx-js/skill-lynx-trace-analysis"
-            "@lynx-js/skill-lynx-trace-record"
-          )
-          
-          if [ "${{ github.event.inputs.packages }}" = "all" ]; then
-            SELECTED_PACKAGES=("${ALL_PACKAGES[@]}")
-          else
-            SELECTED_PACKAGES=("${{ github.event.inputs.packages }}")
-          fi
-          
-          CHANGESET_CONTENT="---\n"
-          for pkg in "${SELECTED_PACKAGES[@]}"; do
-            CHANGESET_CONTENT="$CHANGESET_CONTENT  \"$pkg\": patch\n"
-          done
-          CHANGESET_CONTENT="$CHANGESET_CONTENT---\n\nRelease packages"
-          
-          echo -e "$CHANGESET_CONTENT" > .changeset/release-packages.md
+          cat > .changeset/release-packages.md <<'EOF'
+          ---
+          "@lynx-js/skill-lynx-trace-analysis": patch
+          ---
+
+          Release trace analysis skill
+          EOF
 
       - name: Version and publish patch version
         if: ${{ github.event.inputs.release_type == 'patch' }}

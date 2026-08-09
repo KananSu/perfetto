@@ -140,14 +140,6 @@ function main() {
     true,
   );
 
-  generateSkill(
-    'trace_record.md',
-    path.join(SKILLS_ROOT_DIR, 'trace-record-skill'),
-    ['trace_record.bundle.cjs', 'shared.bundle.cjs'],
-    false,
-    false,
-  );
-
   console.log('\nAll skills generated successfully!');
 }
 
