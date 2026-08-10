@@ -28,6 +28,21 @@
         "Distinguishes event delivery delay from handler cost and later rendering work.",
         "Formats cited events as EventName [slice id: N] instead of using unqualified event names."
       ]
+    },
+    {
+      "id": 3,
+      "name": "first-paint-gap-platform-diagnosis",
+      "prompt": "In this Lynx trace, loadBundle completes much earlier than first paint. Diagnose the gap for Android and iOS. On Android, determine whether LynxView.onAttachedToWindow for this instance happened too late; on iOS, identify which work blocked rendering in the interval.",
+      "expected_output": "An evidence-bound, platform-specific diagnosis of the loadBundle-to-first-paint gap.",
+      "files": [
+        "first-paint-gap.pftrace"
+      ],
+      "expectations": [
+        "Loads references/render-pipeline.md before analyzing the first-paint gap.",
+        "For Android, correlates loadBundle, Timing::Mark.paintEnd, and LynxView.onAttachedToWindow by the same instance_id, and distinguishes Window attachment from Lynx internal render-tree insertion.",
+        "Recommends earlier host-side placement of LynxView in the Android View hierarchy, treating ViewGroup.addView only as an example rather than the sole integration mechanism.",
+        "For iOS, derives the numeric loadBundle-end and first-paint timestamps, queries their interval, and names a blocker only when flow/dependency or UI/main-thread blocking evidence supports it."
+      ]
     }
   ]
 }
