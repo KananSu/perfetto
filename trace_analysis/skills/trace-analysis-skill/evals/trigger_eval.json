@@ -12,6 +12,10 @@
     "should_trigger": true
   },
   {
+    "query": "In a Lynx Android trace, why is first paint long after loadBundle, and was LynxView.onAttachedToWindow too late?",
+    "should_trigger": true
+  },
+  {
     "query": "How do I change the text color of a Lynx component?",
     "should_trigger": false
   },
