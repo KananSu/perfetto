@@ -37,6 +37,17 @@ Triggered by data changes or user interactions:
 
 - **Definition**: Lynx First Frame Rendering stage, composed by `parse`, `mtsrender`, `resolve`, `layout`, `paintingUiOperationExecute`, etc stages.
 
+#### Gap Between `loadBundle` End and First-Paint Completion
+
+- **Scope**: Investigate this only after identifying the matched `LynxLoadTemplate` / `loadBundle`, the first-frame `Timing::Mark.paintEnd` marker, and, on Android, `LynxView.onAttachedToWindow` by the same `instance_id`. Verify that the attachment falls inside the interval from `loadBundle` end to first paint, and that the interval is a material gap.
+- **Android**:
+  - **Query**: Query `LynxView.onAttachedToWindow` using the matching `instance_id` and verify that its timestamp falls in the verified interval.
+  - **Verdict Logic**: If its timestamp is far after `loadBundle` completes and accounts for the pre-paint gap, this is evidence that the `LynxView` may have been added to the Android View hierarchy or attached to Window late, which may have delayed first paint. Missing, mismatched, or out-of-interval events do not support this conclusion.
+  - **Optimization**: Review host-side timing for adding the `LynxView` to the Android View hierarchy (for example, `ViewGroup.addView`) and make it attach to Window earlier.
+- **iOS**:
+  - **Query**: First resolve the matched `loadBundle` end and first-frame `Timing::Mark.paintEnd` timestamps in ms. Then call `query_by_time_window(<loadBundle_end_ms>, <first_paint_ts_ms>)` to inspect all trace events that overlap the interval. After identifying a relevant track, you may focus the query on that track.
+  - **Verdict Logic**: Treat interval-overlapping work as a candidate. Prioritize UI/main-thread long work and relevant flows or dependencies, and assert an actual blocker only when flow/dependency evidence or a blocking UI/main-thread relationship supports it; do not assert causality from temporal correlation alone.
+
 ### parse
 
 - **Definition**: Parse the Lynx bundle for subsequent pipeline processing. Includes bundle decoding and script deserialization.
